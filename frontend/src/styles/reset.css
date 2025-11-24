@@ -1,0 +1,5 @@
+/* Global reset for base elements */
+body {
+  margin: 0;
+  padding: 0;
+}

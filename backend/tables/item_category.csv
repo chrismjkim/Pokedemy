@@ -1,0 +1,52 @@
+﻿id,name,name_ko
+0,unused,미사용
+1,misc_apricorn,규토리
+2,misc_collectible,수집 도구
+3,misc_loot,판매용 도구
+4,misc_bottle_cap,병뚜껑
+5,misc_mail,메일
+6,misc_mulch,비료
+7,species_specific,전용도구
+8,species_encounter,조우 도구
+9,species_form_change,폼체인지용 도구
+10,species_evolution,진화 도구
+11,held_item,배틀 전용 도구
+12,held_item_plate,플레이트
+13,held_item_jewel,주얼
+14,modify_ev,노력치
+15,modify_exp,경험사탕
+16,modify_ability,특성변경
+17,heal_hp,회복-hp
+18,heal_pp,회복-pp
+19,heal_revival,회복-기절
+20,heal_status_condition,회복-상태이상
+21,ball,볼
+22,berry_ev_drop,나무열매-노력치
+23,berry_heal,나무열매-회복
+24,berry_low_hp,나무열매-체력이 적을 때
+25,berry_effectiveness,나무열매-반감
+26,berry_other,나무열매-기타
+27,berry_no_effect,나무열매-포핀
+28,berry_catch_rate,나무열매-포획률
+29,machine,기술머신
+30,battle_stat_raise,배틀-능력치
+31,battle_spelunking,배틀-도망
+32,battle_miracle_shooter,배틀-미라클슈터
+33,story_support,스토리-재화
+34,story_event,스토리-이벤트
+35,story_gameplay,스토리-게임플레이
+36,story_advancement,스토리-진행
+37,contest,콘테스트
+38,pokeathlon,포케슬론
+39,mega_stone,메가스톤
+40,z_crystal,z크리스탈
+41,species_candy,포켓몬사탕
+42,dynamax_level,다이맥스레벨
+43,dynamax_crystal,다이맥스 크리스탈
+44,nature_mint,성격 민트
+45,ingredient_curry,카레라이스 재료
+46,tera_shard,테라피스
+47,ingredient_sandwich,샌드위치 재료
+48,tm_material,유실물
+49,picnic,피크닉
+50,treat,간식

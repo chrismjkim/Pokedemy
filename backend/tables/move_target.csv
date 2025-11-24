@@ -1,0 +1,17 @@
+﻿id,name,name_ko
+0,Normal,자신을 제외한 1명 (근거리)
+1,Normal ranged,자신을 제외한 1명 (원거리)
+2,Self or adjacent ally,자신 또는 인접한 아군
+3,1 Adjacent ally,인접한 아군 1명
+4,1 Adjacent opponent,인접한 적군 1명
+5,All adjacent pokemons,인접한 모든 다른 캐릭터
+6,All adjacent opponents,인접한 적 전체
+7,All allies,아군 전체(필드에 없어도)
+8,All allies except self,아군 전체(자신 제외)
+9,Self,자기 자신
+10,All pokemons on field,시전 시의 모든 아군과 적군
+11,1 Random opponent,랜덤 적 1명
+12,Both fields,아군과 적군 필드 전체
+13,Opponents' field,적군 전체 필드
+14,User's field,아군 전체 필드
+15,Varies,변화함(고정되지 않음)

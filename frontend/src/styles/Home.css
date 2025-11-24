@@ -1,0 +1,15 @@
+.home {
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.home__body {
+  display: flex;
+  align-items: stretch;
+}
+
+.home__content {
+  flex: 1;
+  padding: 16px;
+  color: #1b2a41;
+}

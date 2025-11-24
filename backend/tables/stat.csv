@@ -1,0 +1,10 @@
+﻿id,name,name_ko
+0,HP,HP
+1,Attack,공격
+2,Defense,방어
+3,Special Attack,특수공격
+4,Special Defense,특수방어
+5,Speed,스피드
+6,Accuracy,명중률
+7,Evasiveness,회피율
+8,Criticial Rate,급소율
