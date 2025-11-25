@@ -1,11 +1,8 @@
 import {useState, useEffect} from "react"
 import "../styles/Navbar.css";
-import api from "../api";
+// import api from "../api";
 
 function Navbar() {
-  const [seasons, setSeasons] = useState()
-
-
 
   return (
     <nav className="navbar">
