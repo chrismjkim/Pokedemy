@@ -259,7 +259,7 @@ class Match(models.Model):
     start = models.CharField(max_length=1000, null=True, blank=True)
     end = models.CharField(max_length=1000, null=True, blank=True)
     cnt = models.IntegerField(null=True, blank=True)
-    rankcnt = models.IntegerField(null=True, blank=True)
+    rank_cnt = models.IntegerField(null=True, blank=True)
     rule = models.IntegerField(null=True, blank=True)
     season = models.IntegerField(null=True, blank=True)
     rst = models.IntegerField(null=True, blank=True)

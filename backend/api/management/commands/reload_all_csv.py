@@ -25,9 +25,17 @@ class Command(BaseCommand):
         app = apps.get_app_config("api")
         for model in app.get_models():
             cli_name = self._to_cli_name(model.__name__)
+
+            # Django 기본 옵션 --version 과 충돌을 피하기 위해 version 모델만 접두사 부여
+            if cli_name == "version":
+                option_strings = ["--model-version"]
+            else:
+                # 사용자가 --match 또는 --model-match 둘 다 사용할 수 있도록 alias 제공
+                option_strings = [f"--{cli_name}", f"--model-{cli_name}"]
+
             parser.add_argument(
-                f"--{cli_name}",
-                dest=cli_name,
+                *option_strings,
+                dest=f"model_{cli_name}",
                 action="store_true",
                 help=f"{model.__name__} 모델의 CSV만 import",
             )
@@ -81,7 +89,7 @@ class Command(BaseCommand):
         selected_flags = {
             self._to_cli_name(m.__name__)
             for m in models_in_app
-            if options.get(self._to_cli_name(m.__name__))
+            if options.get(f"model_{self._to_cli_name(m.__name__)}")
         }
 
         if options.get("all") or not selected_flags:
