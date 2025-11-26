@@ -14,3 +14,8 @@ class PokemonSerializer(serializers.ModelSerializer):
         model = Pokemon
         fields = "__all__"
         depth = 1
+
+class MatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = "__all__"

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import PokemonSerializer
-# from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from .serializers import *
 from .models import *
 
 import json
@@ -17,3 +17,10 @@ class PokemonListCreate(generics.ListCreateAPIView):
     
     def get_queryset(self):
         return Pokemon.objects.filter(pokemon_species_id = 3)
+
+class MatchListCreate(generics.ListCreateAPIView):
+    serializer_class = MatchSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Match.objects.all()

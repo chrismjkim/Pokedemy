@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Sidebar.css";
 import api from "../api";
+import MatchDropdownList from "./MatchDropdownList";
 
 function Sidebar() {
   const [pokemons, setPokemons] = useState([]);
@@ -23,7 +24,7 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <p className="sidebar__label">Sidebar</p>
-
+      <MatchDropdownList/>
       {error && <p className="sidebar__error">{error}</p>}
 
       {!error && pokemons.length === 0 ? (
