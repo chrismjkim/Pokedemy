@@ -32,15 +32,11 @@ function Sidebar() {
         <ul className="sidebar__list">
           {pokemons.map((p) => (
             <li key={p.pokemon_species_id ?? p.name}>
-              {p.name}
-              <span className="sidebar__name">HP: {p.hp}</span>
-              <span className="sidebar__name">ATK: {p.attack}</span>
-              <span className="sidebar__name">DEF: {p.defense}</span>
-              <span className="sidebar__name">SPA: {p.special_attack}</span>
-              <span className="sidebar__name">SPD: {p.special_defense}</span>
-              <span className="sidebar__name">SPE: {p.speed}</span>
-              {/* 필요하면 타입도 함께 표시 */}
-              {/* <span className="sidebar__type">{p.type1_id}</span> */}
+              <div className="sidebar__pokemon-name">
+                {p.pokemon_species_id?.name_ko}
+                {p.name_ko ? ` - (${p.name_ko})` : ""}
+              </div>
+
             </li>
           ))}
         </ul>
