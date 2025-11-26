@@ -8,6 +8,30 @@ from django.db import models, transaction
 class Command(BaseCommand):
     help = "FK 의존성 순서에 맞게 모든 CSV를 자동 Import합니다 (위상 정렬 기반, bulk_create)."
 
+    @staticmethod
+    def _to_cli_name(model_name: str) -> str:
+        """Convert CamelCase model name to snake_case CLI flag name."""
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", model_name).lower()
+
+    def add_arguments(self, parser):
+        # --all : 전체 CSV import (기본값과 동일 동작)
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="모든 CSV 파일을 import (기본 동작)",
+        )
+
+        # --<model> : 특정 모델만 CSV import
+        app = apps.get_app_config("api")
+        for model in app.get_models():
+            cli_name = self._to_cli_name(model.__name__)
+            parser.add_argument(
+                f"--{cli_name}",
+                dest=cli_name,
+                action="store_true",
+                help=f"{model.__name__} 모델의 CSV만 import",
+            )
+
     def handle(self, *args, **options):
         base_path = os.path.join(os.getcwd(), "tables")
 
@@ -52,10 +76,28 @@ class Command(BaseCommand):
         ordered_models = topological_sort(models_in_app)
 
         # -------------------------------------------------------
-        # 3️⃣ bulk_create insert 실행
-        CHUNK = 5000  # 성능 최적화를 위한 chunk
+        # 선택된 모델 필터링
+        # --all 이거나 아무 옵션도 없으면 전체 수행
+        selected_flags = {
+            self._to_cli_name(m.__name__)
+            for m in models_in_app
+            if options.get(self._to_cli_name(m.__name__))
+        }
 
-        for model in ordered_models:
+        if options.get("all") or not selected_flags:
+            target_models = ordered_models
+        else:
+            target_models = [m for m in ordered_models if self._to_cli_name(m.__name__) in selected_flags]
+
+        if not target_models:
+            self.stdout.write(self.style.WARNING("⚠️ 선택된 모델이 없습니다. 옵션을 확인해주세요."))
+            return
+
+        # -------------------------------------------------------
+        # 3️⃣ bulk_create insert 실행
+        CHUNK = 10000  # 성능 최적화를 위한 chunk
+
+        for model in target_models:
             model_name = model.__name__
             snake_name = re.sub(r'(?<!^)(?=[A-Z])', '_', model_name).lower()
             csv_path = os.path.join(base_path, f"{snake_name}.csv")

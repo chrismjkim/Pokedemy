@@ -251,3 +251,18 @@ class GrowthRate(models.Model):
     name = models.CharField(max_length=1000, null=True, blank=True)
     name_ko = models.CharField(max_length=1000, null=True, blank=True)
     formular = models.CharField(max_length=1000, null=True, blank=True)
+
+class Match(models.Model):
+    """시즌"""
+    cid = models.CharField(primary_key= True, max_length=1000)
+    name = models.CharField(max_length=1000, null=True, blank=True)
+    start = models.CharField(max_length=1000, null=True, blank=True)
+    end = models.CharField(max_length=1000, null=True, blank=True)
+    cnt = models.IntegerField(null=True, blank=True)
+    rankcnt = models.IntegerField(null=True, blank=True)
+    rule = models.IntegerField(null=True, blank=True)
+    season = models.IntegerField(null=True, blank=True)
+    rst = models.IntegerField(null=True, blank=True)
+    ts1 = models.IntegerField(null=True, blank=True)
+    ts2 = models.IntegerField(null=True, blank=True)
+    
