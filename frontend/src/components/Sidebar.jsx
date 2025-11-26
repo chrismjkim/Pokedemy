@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Sidebar.css";
-import api from "../../api";
+import api from "../api";
 
 function Sidebar() {
   const [pokemons, setPokemons] = useState([]);
