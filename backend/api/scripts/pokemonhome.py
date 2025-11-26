@@ -26,13 +26,6 @@ headers = {
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
 }
 
-df_ability = pd.read_csv("tables/ability.csv")
-df_item = pd.read_csv("tables/item.csv")
-df_move = pd.read_csv("tables/move.csv")
-df_nature = pd.read_csv("tables/nature.csv")
-df_pokemon = pd.read_csv("tables/pokemon.csv")
-df_type = pd.read_csv("tables/type.csv")
-
 def check_response(_URL):
     response = requests.get(_URL, headers=headers)
     if response.status_code != 200:
@@ -43,25 +36,6 @@ def check_response(_URL):
         raise Exception("서버로부터 받은 응답을 읽어들이지 못했습니다.\n{}".format(response.text))
     
     return response
-
-def load_pokemon_info(pokemon) -> pd.DataFrame:
-    id, form = pokemon['id'], pokemon['form']
-    return df_pokemon[(df_pokemon['pokemon_species_id'] == id) & (df_pokemon['form'] == form)]
-
-def load_item_info(item) -> pd.DataFrame:
-    return df_item[(df_item['id'] == int(item['id']))]
-
-def load_move_info(move) -> pd.DataFrame:
-    return df_move[df_move['id'] == int(move['id'])]
-
-def load_ability_info(ability) -> pd.DataFrame:
-    return df_ability[(df_ability['id'] == int(ability['id']))]
-
-def load_nature_info(nature) -> pd.DataFrame:
-    return df_nature[df_nature['id'] == int(nature['id'])]
-
-def load_terastal_info(terastal) -> pd.DataFrame:
-    return df_type[(df_type['id'] == int(terastal['id']))]
 
 def fetch_seasons() -> dict : 
     ''' 모든 시즌의 목록을 json으로 받아옴'''
@@ -89,7 +63,7 @@ def fetch_seasons() -> dict :
     
     if response["code"] != 200:
         raise Exception(f"서버로부터 정상적인 응답을 받지 못했습니다. 내부 응답 코드 {response["code"]}")
-    return json.loads(response["list"])
+    return response["list"]
 
 # 한 시즌에서 싱글배틀 또는 더블배틀의 cId 값을 꺼내옴
 def get_cId(season_num, rule):
@@ -156,8 +130,8 @@ class SeasonBattleData:
         print(f"##### {self.match["name"]} {match_prefix}배틀 TOP {top_n} 포켓몬 #####")
         pokemons =  self.fetch_pokemons_rank()
         for i in range(0, top_n):
-            pokemon = load_pokemon_info(pokemons[i])
-            print(f"{i} 포켓몬: {pokemon['name_ko'].iloc[0]} ({pokemon['type_1'].iloc[0]}, {pokemon['type_2'].iloc[0]})")
+            pokemon = pokemons[i]
+            print(pokemon)
         print('\n')
 
     def show_pokemon_details(self, pokemon_id, form_id):
@@ -194,7 +168,7 @@ class SeasonBattleData:
             print("### 함께 배틀팀에 포함된 포켓몬 ###")
             members = self.info[POKEMON]
             for i, party_data in enumerate(members):
-                party = load_pokemon_info(party_data)
+                party = party_data
                 print(f"{i+1}위 - {party['name_ko']} (폼번호 {party['form']})")
             print("\n")
             
@@ -204,7 +178,7 @@ class SeasonBattleData:
             print("### 도구 ###")
             items = self.info[ITEM]
             for i, item_data in enumerate(items):
-                item = load_item_info(item_data)
+                item = item_data
                 print(f"{i+1}위 - {item['name_ko']} ({item_data['val']}%)")
             print("\n")
             
@@ -214,7 +188,7 @@ class SeasonBattleData:
             print("### 기술 ###")
             moves = self.info[MOVE]
             for i, move_data in enumerate(moves):
-                move = load_move_info(move_data)
+                move = move_data
                 print(f"{i+1}위 - {move['name_ko']} ({move_data['val']}%)")
                 print(move['effect_entry_ko'])
             print("\n")
@@ -225,7 +199,7 @@ class SeasonBattleData:
             print("### 성격 ###")
             natures = self.info[NATURE]
             for i, nature_data in enumerate(natures):
-                nature = load_nature_info(nature_data)
+                nature = nature_data
                 print(f"{i+1}위 - {nature['name_ko']} ({nature_data['val']}%)")
             print("\n")
             
@@ -235,7 +209,7 @@ class SeasonBattleData:
             print("### 특성 ###")
             abilities = self.info[ABILITY]
             for i, ability_data in enumerate(abilities):
-                ability = load_ability_info(ability_data)
+                ability =ability_data
                 print(f"{i+1}위 - {ability['name_ko']} ({ability_data['val']}%)")
                 print(ability['effect_entry_ko'])
             print("\n")
@@ -246,7 +220,7 @@ class SeasonBattleData:
             print("### 테라스탈 타입 ###")
             items = self.info['terastal']
             for i, item_data in enumerate(items):
-                item = load_terastal_info(item_data)
+                item = item_data
                 print(f"{i+1}위 - {item['name_ko']} ({item_data['val']}%)")
             print("\n")
             
@@ -255,7 +229,7 @@ class SeasonBattleData:
         def wins(self):
             print("### 내가 쓰러트린 포켓몬 TOP 10 ###")
             for i, poke_data in enumerate(self.win[POKEMON]):
-                pokemon = load_pokemon_info(poke_data)
+                pokemon = poke_data
                 print(f"{i+1}위 - {pokemon['name_ko']} (폼번호 {pokemon['form']})")
             print("\n")
             
@@ -264,7 +238,7 @@ class SeasonBattleData:
         def win_moves(self):
             print("### 내가 쓰러트린 기술 TOP 10 ###")
             for i, move_data in enumerate(self.win[MOVE]):
-                move = load_move_info(move_data)
+                move = move_data
                 print(f"{i+1}위 - {move['name_ko']} ({move_data['val']}%)")
             print("\n")
             
@@ -273,7 +247,7 @@ class SeasonBattleData:
         def defeats(self):
             print("### 나를 쓰러트린 포켓몬 TOP 10 ###")
             for i, poke_data in enumerate(self.lose[POKEMON]):
-                pokemon = load_pokemon_info(poke_data)
+                pokemon = poke_data
                 print(f"{i+1}위 - {pokemon['name_ko']} (폼번호 {pokemon['form']})")
             print("\n")
             
@@ -282,7 +256,7 @@ class SeasonBattleData:
         def defeat_moves(self):
             print("### 나를 쓰러트린 기술 TOP 10 ###")
             for i, move_data in enumerate(self.lose[MOVE]):
-                move = load_move_info(move_data)
+                move = move_data
                 print(f"{i+1}위 - {move['name_ko']} ({move_data['val']}%)")
             print("\n")
             
@@ -312,5 +286,5 @@ if __name__ == "__main__":
     
     # match.info()
     # match.show_trainers_rank(top_n)
-    # match.show_pokemons_rank(top_n) 
+    match.show_pokemons_rank(top_n) 
     # match.show_pokemon_details(pokemon_id, form_id).moves() 
