@@ -296,8 +296,6 @@ if __name__ == "__main__":
     
     all_seasons = fetch_seasons()
     
-    print(all_seasons)
-    
     # 분석할 시즌 입력
     match_season = '34' # 시즌 15
     match_rule = '0' # 싱글배틀 정보 (싱글: 0, 더블: 1)
