@@ -32,12 +32,11 @@ function Sidebar() {
       ) : (
         <ul className="sidebar__list">
           {pokemons.map((p) => (
-            <li key={p.pokemon_species_id ?? p.name}>
+            <li key={p.id}>
               <div className="sidebar__pokemon-name">
                 {p.pokemon_species_id?.name_ko}
                 {p.name_ko ? ` - (${p.name_ko})` : ""}
               </div>
-
             </li>
           ))}
         </ul>

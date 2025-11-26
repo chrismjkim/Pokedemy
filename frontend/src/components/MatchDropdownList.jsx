@@ -3,53 +3,58 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 
 function MatchDropdownList() {
-    const [matches, setMatches] = useState([]);
-    const [error, setError] = useState(null);
-    const [open, setOpen] = useState(false);
+  const [rule, setRule] = useState("single"); // 매치 룰(싱글/더블)
+  const [matches, setMatches] = useState([]); // 매치 목록
+  const [selectedMatch, setSelectedMatch] = useState(""); // 선택된 매치
 
-    useEffect(() => {
-    const getMatches = async () => {
-      try {
-        const res = await api.get("/api/matches/");
-        setMatches(res.data);
-      } catch (err) {
-        console.error("Failed to fetch matches", err);
-        setError("시즌 목록을 불러오지 못했습니다.");
-      }
-    };
+  const [error, setError] = useState(null); // 에러
 
-    getMatches();
+  const getMatches = async (rule) => {
+    try {
+      const res = await api.get(`/api/matches/${rule}/`);
+      setMatches(res.data);
+    } catch (err) {
+      console.error("Failed to fetch matches", err);
+      setError("시즌 목록을 불러오지 못했습니다.");
+    }
+  };
+
+  useEffect(() => {
+  getMatches("single");
   }, []);
 
   return (
-    <div className="match-dropdown">
-      <button
-        type="button"
-        className="match-dropdown__toggle"
-        onClick={() => setOpen((prev) => !prev)}
-        aria-expanded={open}
+    <div className="season-box">
+      {/* 라디오 버튼 */}
+      <div className="radio-group">
+        <label>
+          <input type="radio" name="rule" value="single"
+          checked={rule === "single"} onChange={() => setRule("single")}
+          />
+          싱글
+        </label>
+
+        <label>
+          <input
+            type="radio" name="rule" value="double"
+            checked={rule === "double"} onChange={() => setRule("double")}
+          />
+          더블
+        </label>
+      </div>
+
+      {/* 시즌 드롭다운 */}
+      <select
+        value={selectedMatch}
+        onChange={(e) => setSelectedMatch(e.target.value)}
       >
-        {open ? "시즌 닫기" : "시즌 보기"}
-      </button>
+        {matches.map((m) => (
+          <option key={m.cid} value={m.cid}>{m.name}</option>
+        ))}
+      </select>
 
-      {error && <p className="match-dropdown__error">{error}</p>}
-
-      {!error && matches.length === 0 && (
-        <p className="match-dropdown__empty">불러온 시즌이 없습니다.</p>
-      )}
-
-      {open && !error && matches.length > 0 && (
-        <ul className="match-dropdown__list">
-          {matches.map((match) => (
-            <li key={match.id ?? match.name} className="match-dropdown__item">
-              <span className="match-dropdown__name">{match.name}</span>
-              <span className="match-dropdown__rule"> - {match.rule}</span>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
-  )
+  );
 }
 
 export default MatchDropdownList;

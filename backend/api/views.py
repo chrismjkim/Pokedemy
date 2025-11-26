@@ -23,4 +23,6 @@ class MatchListCreate(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Match.objects.all()
+        rule = self.kwargs["rule"]
+        rule_id = 0 if rule=="single" else 1
+        return Match.objects.filter(rule=rule_id)
