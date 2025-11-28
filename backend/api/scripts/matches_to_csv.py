@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 import pandas as pd
-import pokemonhome as phome
+import pokemonhome as pohome
 import json
 
 # Convenience aliases for readability
@@ -11,7 +11,7 @@ Match = Dict[str, Any]
 
 def load_seasons() -> Dict[str, Season]:
     """Fetch all seasons and ensure they are returned as a dictionary."""
-    raw_seasons: Any = phome.fetch_seasons()
+    raw_seasons: Any = pohome.fetch_seasons()
     return json.loads(raw_seasons) if isinstance(raw_seasons, str) else raw_seasons
 
 
@@ -42,7 +42,8 @@ def save_csv(df: pd.DataFrame, filename: str = "match.csv") -> Path:
     tables_dir.mkdir(parents=True, exist_ok=True)
 
     output_path = tables_dir / filename
-    df.to_csv(output_path, index=False)
+    # UTF-8로 명시적으로 저장해 한글 데이터가 깨지지 않도록 한다.
+    df.to_csv(output_path, index=False, encoding="utf-8")
     return output_path
 
 

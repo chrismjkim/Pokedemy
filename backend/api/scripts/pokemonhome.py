@@ -262,7 +262,13 @@ class SeasonBattleData:
             
             return self
 
-
+def fetch_pokemons_rank(match_cid, match_rst, match_ts2):
+    _URL = URL_POKEMON.format(
+        cid = match_cid,
+        rst = match_rst,
+        ts = match_ts2,
+    )
+    return check_response(_URL)
 
 # -----------------------------------------------------------------------------------------------------------------------
 
@@ -274,6 +280,7 @@ if __name__ == "__main__":
     match_season = '34' # 시즌 15
     match_rule = '0' # 싱글배틀 정보 (싱글: 0, 더블: 1)
     match_prefix = '싱글' if match_rule == '0' else '더블' # 0 -> 싱글, 1 -> 더블
+    match_cid = 'quqjjyxlbddu5uwz7wbn'
     
     match = SeasonBattleData(match_season, match_rule)
     
@@ -286,5 +293,6 @@ if __name__ == "__main__":
     
     # match.info()
     # match.show_trainers_rank(top_n)
-    match.show_pokemons_rank(top_n) 
+    test_fetch = match.fetch_pokemons_rank()
+    print(test_fetch)
     # match.show_pokemon_details(pokemon_id, form_id).moves() 

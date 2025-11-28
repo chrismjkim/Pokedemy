@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 // import "../styles/MatchDropdownList.css";
 import api from "../api";
 
-function MatchDropdownList() {
+function MatchDropdownList({selectedMatch, setSelectedMatch}) {
   const [rule, setRule] = useState("single"); // 매치 룰(싱글/더블)
   const [matches, setMatches] = useState([]); // 매치 목록
-  const [selectedMatch, setSelectedMatch] = useState(""); // 선택된 매치
-
   const [error, setError] = useState(null); // 에러
 
   const getMatches = async (rule) => {

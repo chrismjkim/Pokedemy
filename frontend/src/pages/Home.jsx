@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import "../styles/Home.css";
 
 function Home() {
+
     return (
     <div className="home">
         <Navbar />

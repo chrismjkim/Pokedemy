@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db.models import Q
+
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .serializers import *
 from .models import *
-
+from .scripts import pokemonhome as pohome
 import json
-from .scripts import pokemonhome
+
 
 # Create your views here.
 
@@ -16,7 +18,14 @@ class PokemonListCreate(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     
     def get_queryset(self):
-        return Pokemon.objects.filter(pokemon_species_id = 3)
+        cid = self.kwargs["cid"]
+        # cid의 포켓몬들을 모두 받아옴
+        match = Match.objects.get(pk = cid)
+        ranked_pokemons = pohome.fetch_pokemons_rank(match.cid, match.rst, match.ts2)
+        q = Q()
+        for p in ranked_pokemons:
+            q |= Q(pokemon_species_id=p["id"], form=p["form"])
+        return Pokemon.objects.filter(q)
 
 class MatchListCreate(generics.ListCreateAPIView):
     serializer_class = MatchSerializer
