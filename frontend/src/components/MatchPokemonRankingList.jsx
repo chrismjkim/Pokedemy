@@ -17,6 +17,9 @@ function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
   };
 
     useEffect(() => {
+      // 선택된 매치가 없으면 요청을 건너뛰도록 가드
+      if (!selectedMatch) return;
+      // MatchDropdownList에서 selectedMatch가 생기면 getPokemons 호출
       getPokemons(selectedMatch);
     }, [selectedMatch]);
 

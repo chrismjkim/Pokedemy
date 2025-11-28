@@ -270,6 +270,19 @@ def fetch_pokemons_rank(match_cid, match_rst, match_ts2):
     )
     return check_response(_URL)
 
+def fetch_trainers_rank(self, match_cid, match_rst, match_ts2, index):
+    # index -> (순위 // 1000) + 1
+    #       -> 간단하게 생각하면 순위 1,000위 당 1씩 증가
+    _URL = URL_TRAINER.format(
+        cid = match_cid,
+        rst = match_rst,
+        ts = match_ts2,
+        idx = index
+    )
+    
+    return check_response(_URL)
+
+
 # -----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":

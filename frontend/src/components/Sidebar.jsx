@@ -5,22 +5,12 @@ import MatchDropdownList from "./MatchDropdownList";
 import MatchPokemonRankingList from "./MatchPokemonRankingList";
 
 function Sidebar() {
-  const [pokemons, setPokemons] = useState([]);
+
   const [selectedMatch, setSelectedMatch] = useState(""); // 선택된 매치
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getPokemons = async () => {
-      try {
-        const res = await api.get("/api/pokemons/");
-        setPokemons(res.data);
-      } catch (err) {
-        console.error("Failed to fetch pokemons", err);
-        setError("포켓몬 목록을 불러오지 못했습니다.");
-      }
-    };
 
-    getPokemons();
   }, []);
 
   return (
@@ -30,28 +20,11 @@ function Sidebar() {
         selectedMatch={selectedMatch} 
         setSelectedMatch={setSelectedMatch}
       />
-
       <MatchPokemonRankingList 
         selectedMatch={selectedMatch} 
         setSelectedMatch={setSelectedMatch}
       />
-
       {error && <p className="sidebar__error">{error}</p>}
-
-      {!error && pokemons.length === 0 ? (
-        <p className="sidebar__empty">불러온 포켓몬이 없습니다.</p>
-      ) : (
-        <ul className="sidebar__list">
-          {pokemons.map((p) => (
-            <li key={p.id}>
-              <div className="sidebar__pokemon-name">
-                {p.pokemon_species_id?.name_ko}
-                {p.name_ko ? ` - (${p.name_ko})` : ""}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
     </aside>
   );
 }

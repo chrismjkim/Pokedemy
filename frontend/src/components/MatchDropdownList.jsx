@@ -11,6 +11,10 @@ function MatchDropdownList({selectedMatch, setSelectedMatch}) {
     try {
       const res = await api.get(`/api/matches/${rule}/`);
       setMatches(res.data);
+      if (!selectedMatch && res.data.length > 0) {
+        // selectedMatch가 비어있고(선택되지 않았고), 매치 목록이 유효하면 선택
+        setSelectedMatch(res.data[0].cid);
+      }
     } catch (err) {
       console.error("Failed to fetch matches", err);
       setError("시즌 목록을 불러오지 못했습니다.");
