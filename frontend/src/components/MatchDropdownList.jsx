@@ -20,8 +20,8 @@ function MatchDropdownList() {
   };
 
   useEffect(() => {
-  getMatches("single");
-  }, []);
+    getMatches(rule);
+  }, [rule]);
 
   return (
     <div className="season-box">
@@ -49,7 +49,7 @@ function MatchDropdownList() {
         onChange={(e) => setSelectedMatch(e.target.value)}
       >
         {matches.map((m) => (
-          <option key={m.cid} value={m.cid}>{m.name}</option>
+          <option key={m.cid} value={m.cid}>{m.name} - {m.rule}</option>
         ))}
       </select>
 
