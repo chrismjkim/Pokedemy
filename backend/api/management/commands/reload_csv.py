@@ -121,7 +121,15 @@ class Command(BaseCommand):
             self.stdout.write(f"📂 {csv_path} → {model_name} 테이블로 불러오는 중...")
 
             try:
-                df = pd.read_csv(csv_path)
+                # utf-8-sig to safely drop BOM; normalize 컬럼명을 소문자/스네이크로 맞춘다.
+                df = pd.read_csv(csv_path, encoding="utf-8-sig")
+                df.columns = [c.strip() for c in df.columns]
+                # cId -> cid, rankCnt -> rank_cnt 등 변형 보정
+                rename_map = {
+                    "cId": "cid", "cid": "cid", "CID": "cid",
+                    "rankCnt": "rank_cnt", "rankcnt": "rank_cnt",
+                }
+                df.rename(columns=rename_map, inplace=True)
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f"❌ CSV 읽기 실패: {csv_path} — {e}"))
                 continue

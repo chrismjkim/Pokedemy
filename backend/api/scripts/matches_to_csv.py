@@ -43,7 +43,7 @@ def save_csv(df: pd.DataFrame, filename: str = "match.csv") -> Path:
 
     output_path = tables_dir / filename
     # UTF-8로 명시적으로 저장해 한글 데이터가 깨지지 않도록 한다.
-    df.to_csv(output_path, index=False, encoding="utf-8")
+    df.to_csv(output_path, index=False, encoding="utf-8-sig")
     return output_path
 
 
