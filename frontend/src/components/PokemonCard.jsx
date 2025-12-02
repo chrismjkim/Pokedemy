@@ -10,18 +10,17 @@ function PokemonCard({ pokemon }) {
 
   return (
     <div className="poke-card">
-      <div className="poke-rank">#{pokemon.rank_order}</div>
-
-      <div className="poke-sprite-wrap" aria-hidden={!spriteSrc}>
-        <div className="poke-sprite-backdrop" />
-        {spriteSrc && <img src={spriteSrc} alt={pokemon.pokemon_species_id?.name_ko || "pokemon"} className="poke-sprite" />}
+      <div className="poke-profile">
+        <div className="rank">#{pokemon.rank_order}</div>
+        <div className="poke-sprite-wrap" aria-hidden={!spriteSrc}>
+          <div className="poke-sprite-backdrop" />
+          {spriteSrc && <img src={spriteSrc} alt={pokemon.pokemon_species_id?.name_ko || "pokemon"} className="poke-sprite" />}
+        </div>
+        <div className="poke-name">
+          {pokemon.pokemon_species_id?.name_ko || pokemon.pokemon_species_id?.name || "이름 없음"}
+          {pokemon.name_ko ? ` (${pokemon.name_ko})` : ""}
+        </div>
       </div>
-
-      <div className="poke-name">
-        {pokemon.pokemon_species_id?.name_ko || pokemon.pokemon_species_id?.name || "이름 없음"}
-        {pokemon.name_ko ? ` (${pokemon.name_ko})` : ""}
-      </div>
-
       <div className="poke-types">
         {type1Src && (
           <img

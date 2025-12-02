@@ -1,15 +1,22 @@
 .poke-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 18px;
+  gap: 8px;
+  padding: 4px 24px;
+  margin: 8px;
   border-radius: 999px;
   background: #ffffff;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+.poke-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
 }
 
-.poke-rank {
+.rank {
   font-weight: 700;
   font-size: 20px;
   color: #111;
@@ -18,8 +25,8 @@
 
 .poke-sprite-wrap {
   position: relative;
-  width: 68px;
-  height: 68px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
 }
 
@@ -33,13 +40,13 @@
 .poke-sprite {
   position: relative;
   z-index: 1;
-  width: 68px;
-  height: 68px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 }
 
 .poke-name {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #141414;
   line-height: 1.3;
@@ -48,14 +55,14 @@
 .poke-types {
   margin-left: auto;
   display: flex;
-  gap: 8px;
+  flex-direction: row;
+  gap: 4px;
   align-items: center;
 }
 
 .type-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   background: #f7f7f7;
   object-fit: contain;
