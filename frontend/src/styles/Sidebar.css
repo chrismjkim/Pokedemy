@@ -1,9 +1,36 @@
 .sidebar {
-  width: 440px;
-  height: auto;
+  width: 476px;
+  height: 100vh;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #f4f6fb;
   border-right: 1px solid #d9e1ee;
   padding: 16px;
+  gap: 24px;
   box-sizing: border-box;
+}
+
+.info-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex:1;
+  min-height: 0;
+}
+
+.info-title {
+  margin: 0px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.info-box {
+  display: block;
+  border-radius: 15px;
+  padding: 0px;
+  background: #e5e5e5;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
 }

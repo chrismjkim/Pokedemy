@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import "../styles/MatchDropdownList.css";
+import "../styles/MatchDropdownList.css";
 import api from "../api";
 
 function MatchDropdownList({selectedMatch, setSelectedMatch}) {
@@ -29,35 +29,35 @@ function MatchDropdownList({selectedMatch, setSelectedMatch}) {
   }, [rule]);
 
   return (
-    <div className="season-box">
-      {/* 라디오 버튼 */}
-      <div className="radio-group">
-        <label>
-          <input type="radio" name="rule" value="single"
-          checked={rule === "single"} onChange={() => setRule("single")}
-          />
-          싱글
-        </label>
+    <div className="info-area-match">
+      <p className="info-title">시즌 정보</p>
+      <div className="info-box">
+        <div className="radio-group">
+          <label>
+            <input type="radio" name="rule" value="single"
+            checked={rule === "single"} onChange={() => setRule("single")}
+            />
+            싱글
+          </label>
+          <label>
+            <input
+              type="radio" name="rule" value="double"
+              checked={rule === "double"} onChange={() => setRule("double")}
+            />
+            더블
+          </label>
+        </div>
+        {/* 시즌 드롭다운 */}
+        <select className="season-list"
+          value={selectedMatch}
+          onChange={(e) => setSelectedMatch(e.target.value)}
+        >
+          {matches.map((m) => (
+            <option className="center-input" key={m.cid} value={m.cid}>{m.name} - {m.rule}</option>
+          ))}
 
-        <label>
-          <input
-            type="radio" name="rule" value="double"
-            checked={rule === "double"} onChange={() => setRule("double")}
-          />
-          더블
-        </label>
+        </select>
       </div>
-
-      {/* 시즌 드롭다운 */}
-      <select
-        value={selectedMatch}
-        onChange={(e) => setSelectedMatch(e.target.value)}
-      >
-        {matches.map((m) => (
-          <option key={m.cid} value={m.cid}>{m.name} - {m.rule}</option>
-        ))}
-
-      </select>
 
     </div>
   );

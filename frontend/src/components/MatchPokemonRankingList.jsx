@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import PokemonCard from "./PokemonCard";
+import "../styles/MatchPokemonRankingList.css"
 
 // selectedMatch: cid 문자열
 function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
@@ -25,7 +26,7 @@ function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
     }, [selectedMatch]);
 
   return (
-    <div>
+    <div className="scrollable">
       {pokemons.map((p) => (
         <div key={p.id}>
           <PokemonCard pokemon={p} />

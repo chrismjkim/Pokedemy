@@ -15,15 +15,17 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <p className="sidebar__label">Sidebar</p>
       <MatchDropdownList 
         selectedMatch={selectedMatch} 
         setSelectedMatch={setSelectedMatch}
       />
-      <MatchPokemonRankingList 
-        selectedMatch={selectedMatch} 
-        setSelectedMatch={setSelectedMatch}
-      />
+      <div className="info-area">
+        <p className="info-title">포켓몬 랭킹</p>
+        <MatchPokemonRankingList 
+          selectedMatch={selectedMatch} 
+          setSelectedMatch={setSelectedMatch}
+        />
+      </div>
       {error && <p className="sidebar__error">{error}</p>}
     </aside>
   );

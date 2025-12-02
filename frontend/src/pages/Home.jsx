@@ -7,10 +7,10 @@ function Home() {
 
     return (
     <div className="home">
-        <Navbar />
-        <div className="home__body">
-        <Sidebar />
-        <div className="home__content">here</div>
+            <Navbar />
+            <div className="home__body">
+            <Sidebar />
+            <div className="home__content">here</div>
         </div>
     </div>
     );
