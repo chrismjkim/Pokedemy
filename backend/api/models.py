@@ -133,6 +133,8 @@ class Type(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=1000, null=True, blank=True)
     name_ko = models.CharField(max_length=1000, null=True, blank=True)
+    default_img_url = models.CharField(max_length=1000, null=True, blank=True)
+    tera_img_url = models.CharField(max_length=1000, null=True, blank=True)
 
 class Item(models.Model):
     """도구"""

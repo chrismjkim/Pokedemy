@@ -27,7 +27,7 @@ function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
   return (
     <div>
       {pokemons.map((p) => (
-        <div>
+        <div key={p.id}>
           <PokemonCard pokemon={p} />
         </div>
       ))}

@@ -114,6 +114,10 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f"⚠️ {csv_path} 없음 — 건너뜀"))
                 continue
 
+            # 기존 데이터를 모두 비우고 새로 적재 (FK 순서를 맞춘 topological order 기반)
+            self.stdout.write(f"🧹 {model_name} 테이블 기존 행 삭제 중...")
+            model.objects.all().delete()
+
             self.stdout.write(f"📂 {csv_path} → {model_name} 테이블로 불러오는 중...")
 
             try:
