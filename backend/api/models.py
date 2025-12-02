@@ -69,6 +69,7 @@ class PokemonFormVariation(models.Model):
     form_variation_name_ko = models.CharField(max_length=1000, null=True, blank=True)
     is_default = models.BooleanField(null=True, blank=True)
     introduced_in_version_group_id = models.IntegerField(null=True, blank=True)
+    sprite_url = models.CharField(max_length=1000, null=True, blank=True)
 
 class Pokemon(models.Model):
     """포켓몬과 포켓몬"""
@@ -105,6 +106,7 @@ class Pokemon(models.Model):
     is_mega = models.BooleanField(null=True, blank=True)
     is_gmax = models.BooleanField(null=True, blank=True)
     is_region_form = models.BooleanField(null=True, blank=True)
+    sprite_url = models.CharField(null=True, blank=True)
 
 class PokemonMove(models.Model):
     """포켓몬이 배우는 기술"""
@@ -133,8 +135,8 @@ class Type(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=1000, null=True, blank=True)
     name_ko = models.CharField(max_length=1000, null=True, blank=True)
-    default_img_url = models.CharField(max_length=1000, null=True, blank=True)
-    tera_img_url = models.CharField(max_length=1000, null=True, blank=True)
+    icon_url = models.CharField(max_length=1000, null=True, blank=True)
+    tera_icon_url = models.CharField(max_length=1000, null=True, blank=True)
 
 class Item(models.Model):
     """도구"""
