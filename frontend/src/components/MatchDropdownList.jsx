@@ -11,9 +11,12 @@ function MatchDropdownList({selectedMatch, setSelectedMatch}) {
     try {
       const res = await api.get(`/api/matches/${rule}/`);
       setMatches(res.data);
-      if (!selectedMatch && res.data.length > 0) {
-        // selectedMatch가 비어있고(선택되지 않았고), 매치 목록이 유효하면 선택
+      // 룰이 바뀔 때마다 해당 룰의 첫 번째 매치를 기본 선택값으로 반영해
+      // 하위 랭킹 리스트가 즉시 갱신되도록 한다.
+      if (res.data.length > 0) {
         setSelectedMatch(res.data[0].cid);
+      } else {
+        setSelectedMatch("");
       }
     } catch (err) {
       console.error("Failed to fetch matches", err);
@@ -53,6 +56,7 @@ function MatchDropdownList({selectedMatch, setSelectedMatch}) {
         {matches.map((m) => (
           <option key={m.cid} value={m.cid}>{m.name} - {m.rule}</option>
         ))}
+
       </select>
 
     </div>

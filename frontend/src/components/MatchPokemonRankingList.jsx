@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+import PokemonCard from "./PokemonCard";
 
 // selectedMatch: cid 문자열
 function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
@@ -26,11 +27,10 @@ function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
   return (
     <div>
       {pokemons.map((p) => (
-          <div>
-            <p>{p.pokemon_species_id?.name_ko}
-            {p.name_ko ? ` - (${p.name_ko})` : ""}</p>
-          </div>
-        ))}
+        <div>
+          <PokemonCard pokemon={p} />
+        </div>
+      ))}
     </div>
   );
 }

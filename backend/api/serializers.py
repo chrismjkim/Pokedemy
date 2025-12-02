@@ -10,6 +10,7 @@ class PokemonSpeciesSerializer(serializers.ModelSerializer):
 
 class PokemonSerializer(serializers.ModelSerializer):
     pokemon_species = PokemonSpeciesSerializer(source="pokemon_species_id", read_only=True)
+    rank_order = serializers.IntegerField(read_only=True)
     class Meta:
         model = Pokemon
         fields = "__all__"
