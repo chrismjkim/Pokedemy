@@ -15,6 +15,7 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
+      <div className="sidebar-content">
       <MatchDropdownList 
         selectedMatch={selectedMatch} 
         setSelectedMatch={setSelectedMatch}
@@ -26,6 +27,9 @@ function Sidebar() {
           setSelectedMatch={setSelectedMatch}
         />
       </div>
+      </div>
+
+
       {error && <p className="sidebar__error">{error}</p>}
     </aside>
   );

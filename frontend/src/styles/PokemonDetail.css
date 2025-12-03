@@ -1,0 +1,26 @@
+.home__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+
+    padding: 8px 16px;
+    gap: 4px;
+    color: #1b2a41;
+
+    box-sizing: border-box;
+}
+
+.info-title {
+    margin: 0px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.info-box {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}

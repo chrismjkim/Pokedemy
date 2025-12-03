@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import "../styles/Home.css";
+import PokemonDetail from "../components/PokemonDetail";
 
 function Home() {
 
@@ -10,21 +11,7 @@ function Home() {
         <Navbar />
         <div className="home__body">
             <Sidebar />
-            <div className="home__content">
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                <h1>Here</h1>
-                
-            </div>
+            <PokemonDetail />
         </div>
     </div>
     );
