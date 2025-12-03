@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useStore } from "../store/Store"; 
 import "../styles/Sidebar.css";
 import api from "../api";
 import MatchDropdownList from "./MatchDropdownList";
@@ -6,8 +7,10 @@ import MatchPokemonRankingList from "./MatchPokemonRankingList";
 
 function Sidebar() {
 
-  const [selectedMatch, setSelectedMatch] = useState(""); // 선택된 매치
   const [error, setError] = useState(null);
+
+  const selectedMatch = useStore((s) => s.selectedMatch); // 선택된 매치
+  const setSelectedMatch = useStore((s) => s.setSelectedMatch);
 
   useEffect(() => {
 
@@ -16,16 +19,10 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-content">
-      <MatchDropdownList 
-        selectedMatch={selectedMatch} 
-        setSelectedMatch={setSelectedMatch}
-      />
+      <MatchDropdownList />
       <div className="info-area">
         <p className="info-title">포켓몬 랭킹</p>
-        <MatchPokemonRankingList 
-          selectedMatch={selectedMatch} 
-          setSelectedMatch={setSelectedMatch}
-        />
+        <MatchPokemonRankingList />
       </div>
       </div>
 

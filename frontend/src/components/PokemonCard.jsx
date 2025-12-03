@@ -1,5 +1,5 @@
 import "../styles/PokemonCard.css"
-import { usePokemonStore } from "../store/pokemonStore";
+import { useStore } from "../store/Store";
 
 function PokemonCard({ pokemon }) {
   const apiBase = import.meta.env.VITE_API_URL;
@@ -9,7 +9,7 @@ function PokemonCard({ pokemon }) {
   const type2Src = pokemon?.type2_id?.icon_url
     ? `${apiBase}${pokemon.type2_id.icon_url}` : "";
 
-  const setSelectedPokemon = usePokemonStore((s) => s.setSelectedPokemon);
+  const setSelectedPokemon = useStore((s) => s.setSelectedPokemon);
 
   return (
     <button className="poke-card" type="button" onClick={() => setSelectedPokemon(pokemon)}>

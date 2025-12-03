@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "../styles/MatchDropdownList.css";
+import { useStore } from "../store/Store";
 import api from "../api";
 
-function MatchDropdownList({selectedMatch, setSelectedMatch}) {
+function MatchDropdownList() {
   const [rule, setRule] = useState("single"); // 매치 룰(싱글/더블)
   const [matches, setMatches] = useState([]); // 매치 목록
   const [error, setError] = useState(null); // 에러
+
+  const selectedMatch = useStore((s) => s.selectedMatch);
+  const setSelectedMatch = useStore((s) => s.setSelectedMatch);
 
   const getMatches = async (rule) => {
     try {

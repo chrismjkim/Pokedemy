@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
+import { useStore } from "../store/Store";
+
 import api from "../api";
 import PokemonCard from "./PokemonCard";
 import "../styles/MatchPokemonRankingList.css"
 
 // selectedMatch: cid 문자열
-function MatchPokemonRankingList({selectedMatch, setSelectedMatch}) {
+function MatchPokemonRankingList() {
   const [pokemons, setPokemons] = useState([]);
   const [error, setError] = useState(null);
+
+  const selectedMatch = useStore((s) => s.selectedMatch);
 
   const getPokemons = async (selectedMatch) => {
     try {

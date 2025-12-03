@@ -149,7 +149,7 @@ class SeasonBattleData:
         def fetch_pokemon_details(self):
             details = {}
             
-            # i 1당 포켓몬 200마리까지를 조회하게 되고, 포켓몬 전체 마릿수는 1024마리이므로 총 i는 0, 1, 2, 3, 4, 5까지 늘어나야 함
+            # i 1당 포켓몬 200마리까지를 조회하게 되고, 포켓몬 전체 마릿수는 1025마리이므로 총 i는 0, 1, 2, 3, 4, 5까지 늘어나야 함
             for i in range(0, 6):
                 _URL = URL_PDETAIL.format(
                     cid = self.match['cId'],
@@ -282,13 +282,29 @@ def fetch_trainers_rank(self, match_cid, match_rst, match_ts2, index):
     
     return check_response(_URL)
 
+def fetch_pokemon_details(match_cid, match_rst, match_ts2):
+    details = {}
+    
+    # i 1당 포켓몬 200마리까지를 조회하게 되고, 포켓몬 전체 마릿수는 1025마리이므로 총 i는 0, 1, 2, 3, 4, 5까지 늘어나야 함
+    for i in range(0, 6):
+        _URL = URL_PDETAIL.format(
+            cid = match_cid,
+            rst = match_rst,
+            ts = match_ts2,
+            idx = i + 1
+        )
+        response = check_response(_URL)
+        try:
+            details.update(response)
+        except:
+            raise Exception("서버로부터 받은 응답을 읽어들이지 못했습니다.\n{}".format(response.text))
+    return details
 
 # -----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     
     all_seasons = fetch_seasons()
-    print(all_seasons)
     # 분석할 시즌 입력
     match_season = '34' # 시즌 15
     match_rule = '0' # 싱글배틀 정보 (싱글: 0, 더블: 1)
@@ -306,6 +322,8 @@ if __name__ == "__main__":
     
     # match.info()
     # match.show_trainers_rank(top_n)
-    test_fetch = match.fetch_pokemons_rank()
-    print(test_fetch)
+    test_fetch = fetch_pokemon_details(match.match['cId'], match.match['rst'], match.match['ts2'])
+    print(test_fetch['1025']['0']['temoti'].keys())
+    print(test_fetch['1025']['0']['lose'].keys())
+    print(test_fetch['1025']['0']['win'].keys())
     # match.show_pokemon_details(pokemon_id, form_id).moves() 
