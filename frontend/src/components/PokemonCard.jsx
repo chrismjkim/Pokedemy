@@ -12,8 +12,7 @@ function PokemonCard({ pokemon }) {
   const setSelectedPokemon = usePokemonStore((s) => s.setSelectedPokemon);
 
   return (
-    <button type="button" onClick={() => setSelectedPokemon(pokemon)}>버튼
-    <div className="poke-card">
+    <button className="poke-card" type="button" onClick={() => setSelectedPokemon(pokemon)}>
       <div className="poke-profile">
         <div className="rank">#{pokemon.rank_order}</div>
         <div className="poke-sprite-wrap" aria-hidden={!spriteSrc}>
@@ -41,7 +40,6 @@ function PokemonCard({ pokemon }) {
           />
         )}
       </div>
-    </div>
     </button>
   );
 }

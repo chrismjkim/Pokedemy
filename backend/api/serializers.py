@@ -9,7 +9,6 @@ class PokemonSpeciesSerializer(serializers.ModelSerializer):
         depth = 1
 
 class PokemonSerializer(serializers.ModelSerializer):
-    pokemon_species = PokemonSpeciesSerializer(source="pokemon_species_id", read_only=True)
     rank_order = serializers.IntegerField(read_only=True)
     class Meta:
         model = Pokemon
