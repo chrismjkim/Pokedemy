@@ -48,12 +48,12 @@ function MatchDropdownList({selectedMatch, setSelectedMatch}) {
           </label>
         </div>
         {/* 시즌 드롭다운 */}
-        <select className="season-list"
+        <select className="season-list text-body"
           value={selectedMatch}
           onChange={(e) => setSelectedMatch(e.target.value)}
         >
           {matches.map((m) => (
-            <option className="center-input" key={m.cid} value={m.cid}>{m.name} - {m.rule}</option>
+            <option className="center-input" key={m.cid} value={m.cid}>{m.name} ({m.start} - {m.end})</option>
           ))}
 
         </select>

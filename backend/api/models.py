@@ -149,7 +149,7 @@ class Item(models.Model):
     fling_status_condition_id = models.ForeignKey('StatusCondition', on_delete=models.SET_NULL, null=True, blank=True, db_column='fling_status_condition_id')
     item_category_id = models.ForeignKey('ItemCategory', on_delete=models.SET_NULL, null=True, blank=True, db_column='item_category_id')
     effect = models.CharField(max_length=1000, null=True, blank=True)
-    sprite_id = models.IntegerField(null=True, blank=True)
+    sprite_url = models.CharField(max_length=1000, null=True, blank=True)
 
 class ItemCategory(models.Model):
     """도구 카테고리"""

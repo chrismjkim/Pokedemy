@@ -4,7 +4,7 @@
 @font-face {
   font-family: 'Pretendard';
   src: url('/fonts/Pretendard-Medium.ttf') format('truetype');
-  font-weight: 200;
+  font-weight: 500;
   font-style: normal;
 }
 
@@ -14,11 +14,11 @@ body {
 }
 
 /* 자주 쓰는 텍스트 사이즈 */
-.font-display { font-size: 36px; }
-.font-title   { font-size: 24px; }
-.font-subtitle{ font-size: 20px; }
-.font-body    { font-size: 16px; }
-.font-label   { font-size: 12px; }
+.text-display  { font-size: 36px; }
+.text-title    { font-size: 24px; }
+.text-subtitle { font-size: 20px; }
+.text-body     { font-size: 16px; }
+.text-label    { font-size: 12px; }
 
 /* 배경색 세트(외곽선 없음) */
 .bg-white    { background: #ffffff; border: none; }
