@@ -1,4 +1,5 @@
-import "../styles/PokemonCard.css";
+import "../styles/PokemonCard.css"
+import { usePokemonStore } from "../store/pokemonStore";
 
 function PokemonCard({ pokemon }) {
   const apiBase = import.meta.env.VITE_API_URL;
@@ -8,7 +9,10 @@ function PokemonCard({ pokemon }) {
   const type2Src = pokemon?.type2_id?.icon_url
     ? `${apiBase}${pokemon.type2_id.icon_url}` : "";
 
+  const setSelectedPokemon = usePokemonStore((s) => s.setSelectedPokemon);
+
   return (
+    <button type="button" onClick={() => setSelectedPokemon(pokemon)}>버튼
     <div className="poke-card">
       <div className="poke-profile">
         <div className="rank">#{pokemon.rank_order}</div>
@@ -38,6 +42,7 @@ function PokemonCard({ pokemon }) {
         )}
       </div>
     </div>
+    </button>
   );
 }
 
