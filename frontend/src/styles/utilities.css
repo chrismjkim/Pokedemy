@@ -1,0 +1,38 @@
+/* 공용 유틸리티: 중복 스타일 묶음 */
+
+/* Pretendard 폰트 등록 (public/fonts/Pretendard.ttf 등에 배치) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Medium.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+/* 전역 폰트 적용 */
+body {
+  font-family: 'Pretendard', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+}
+
+/* 자주 쓰는 텍스트 사이즈 */
+.font-display { font-size: 36px; }
+.font-title   { font-size: 24px; }
+.font-subtitle{ font-size: 20px; }
+.font-body    { font-size: 16px; }
+.font-label   { font-size: 12px; }
+
+/* 배경색 세트(외곽선 없음) */
+.bg-white    { background: #ffffff; border: none; }
+.bg-gray     { background: #e5e5e5; border: none; }
+.bg-gray-soft{ background: #f1f1f1; border: none; }
+
+/* 빈번한 레이아웃 유틸 */
+.flex-row-center { display: flex; align-items: center; }
+.flex-col        { display: flex; flex-direction: column; }
+.flex-1          { flex: 1; min-height: 0; }
+
+/* 공통 제목 스타일 */
+.info-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
