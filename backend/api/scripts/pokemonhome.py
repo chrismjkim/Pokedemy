@@ -326,4 +326,5 @@ if __name__ == "__main__":
     print(test_fetch['1025']['0']['temoti'].keys())
     print(test_fetch['1025']['0']['lose'].keys())
     print(test_fetch['1025']['0']['win'].keys())
+    print(test_fetch)
     # match.show_pokemon_details(pokemon_id, form_id).moves() 

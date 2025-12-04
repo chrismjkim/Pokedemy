@@ -19,3 +19,34 @@ class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
         fields = "__all__"
+
+class MoveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Move
+        fields = "__all__"
+        depth =1
+
+class AbilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ability
+        fields = "__all__"
+        depth =1
+        
+class NatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nature
+        fields = "__all__"
+        depth =1
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = "__all__"
+        depth =1
+        
+class TypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Type
+        fields = "__all__"
+        depth =1
+        

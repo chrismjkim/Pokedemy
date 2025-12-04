@@ -12,7 +12,7 @@ function PokemonStats () {
 
   const getStats = async (match, pokemon) => {
     try {
-      const res = api.get(``);
+      const res = api.get(`pdetails/${match}`);
     } catch (err) {
       console.error("Failed to fetch matches", err);
       setError("포켓몬 목록을 불러오지 못했습니다.");
