@@ -314,8 +314,8 @@ if __name__ == "__main__":
     match = SeasonBattleData(match_season, match_rule)
     
     # 분석할 포켓몬 입력
-    pokemon_id = 888 # int도 가능
-    form_id = 1 # int도 가능
+    pokemon_id = 666 # int도 가능
+    form_id = 99 # int도 가능
     
     # 불러올 순위의 수
     top_n = 150
@@ -323,8 +323,4 @@ if __name__ == "__main__":
     # match.info()
     # match.show_trainers_rank(top_n)
     test_fetch = fetch_pokemon_details(match.match['cId'], match.match['rst'], match.match['ts2'])
-    print(test_fetch['1025']['0']['temoti'].keys())
-    print(test_fetch['1025']['0']['lose'].keys())
-    print(test_fetch['1025']['0']['win'].keys())
-    print(test_fetch)
-    # match.show_pokemon_details(pokemon_id, form_id).moves() 
+    match.show_pokemon_details(pokemon_id, form_id).moves() 

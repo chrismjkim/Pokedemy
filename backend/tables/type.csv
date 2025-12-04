@@ -1,4 +1,4 @@
-﻿id,name,name_ko,default_img_url,tera_img_url
+﻿id,name,name_ko,icon_url,tera_icon_url
 0,Normal,노말,/static/types/normal.png,/static/types_tera/normal.png
 1,Fighting,격투,/static/types/fighting.png,/static/types_tera/fighting.png
 2,Flying,비행,/static/types/flying.png,/static/types_tera/flying.png
@@ -17,5 +17,5 @@
 15,Dragon,드래곤,/static/types/dragon.png,/static/types_tera/dragon.png
 16,Dark,악,/static/types/dark.png,/static/types_tera/dark.png
 17,Fairy,페어리,/static/types/fairy.png,/static/types_tera/fairy.png
-18,Stellar,스텔라,,/static/types_tera/stellar.png
-19,???,???,,
+98,???,???,,
+99,Stellar,스텔라,,/static/types_tera/stellar.png

@@ -4,25 +4,18 @@ import api from "../api";
 
 function PokemonStats () {
 
-  const [stats, setStats] = useState();
   const [error, setError] =useState(null);
 
-  const match = useStore((s) => s.selectedMatch);
-  const pokemon = useStore((s) => s.selectedPokemon);
+  const selected = useStore((s) => s.selectedPokemon);
+  const pdetails = useStore((s) => s.pokemonDetails);
 
-  const getStats = async (match, pokemon) => {
-    try {
-      const res = api.get(`pdetails/${match}`);
-    } catch (err) {
-      console.error("Failed to fetch matches", err);
-      setError("포켓몬 목록을 불러오지 못했습니다.");
-    }
-  }
-  return (
-    <>
-    something
-    </>
-  )
+  const detail =
+    selected && pdetails
+      ? pdetails?.[String(selected.id)]?.[String(selected.form ?? 0)]
+      : null;
+
+  if (!detail) return <div>포켓몬을 선택하세요</div>;
+  return <p>{detail.temoti.waza[0].id}, {detail.temoti.waza[0].val} %</p>;
 }
 
 export default PokemonStats;
