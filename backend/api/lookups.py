@@ -23,7 +23,7 @@ def _build_lookup_tables():
     types = TypeSerializer(Type.objects.all().select_related(), many=True).data
 
     LOOKUPS["pokemon"] = {
-        (p["pokemon_species_id"]["id"], p["form"]): p
+        p["pokemon_species_id"]["id"] * 1000 + p["form"]: p
         for p in pokemons
     }
     LOOKUPS["move"] = {str(m["id"]): m for m in moves}

@@ -1,3 +1,6 @@
+import json
+import copy
+
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.db.models import Q, Case, When, IntegerField, FloatField
@@ -13,7 +16,6 @@ from .models import *
 from .models import Type as PokemonType # 이름 충돌 방지
 from .scripts import pokemonhome as pohome
 from .lookups import get_lookup # lookups.py
-import json
 
 # 타입 힌팅
 from typing import Dict, Type, List, Tuple
@@ -49,62 +51,25 @@ def annotate_detail_list(array, key_name):
     key = target_models[key_name]
     lookup = get_lookup(key)
     
-    if key=="pokemon": # key_name이 pokemon인 경우
+    # key_name이 pokemon인 경우
+    if key=="pokemon": 
         for rank, p in enumerate(array):
-            array_to_dict[(p['id'], p['form'])
-            ] = lookup[(p['id'], p['form'])]
-            array_to_dict[(p['id'], p['form'])]['rank_order'] = rank+1
-    else: # key_name이 pokemon이 아닌 경우
+            lu_key = p["id"] * 1000 + p["form"]
+            array_to_dict[lu_key] = copy.deepcopy(lookup[lu_key])
+            array_to_dict[lu_key]['rank_order'] = rank+1
+    # key_name이 pokemon이 아닌 경우
+    else: 
         for rank, object in enumerate(array):
             obj_id = str(object['id'])
             try:
-                array_to_dict[obj_id] = lookup[obj_id]
+                array_to_dict[obj_id] = copy.deepcopy(lookup[obj_id])
             except:
-                array_to_dict[obj_id] = lookup[int(obj_id)]
+                array_to_dict[obj_id] = copy.deepcopy(lookup[int(obj_id)])
             array_to_dict[obj_id]['rank_order'] = rank+1
             array_to_dict[obj_id]['usage_rate'] = object['val']
             
-    array = array_to_dict
+    return array_to_dict
     
-    """
-        target_model, target_serializer = target_models[key_name]
-        # Hinting
-        target_model: models.Model
-        target_serializer: Type[drf_serializers.Serializer]
-        
-        q = Q()
-        
-        # target_model이 Pokemon인 경우
-        if target_model==Pokemon:
-            for p in array:
-                q |= Q(pokemon_species_id=p["id"], form=p["form"])
-            cases = [
-                When(pokemon_species_id=p["id"], form=p["form"], then=idx+1)
-                for idx, p in enumerate(array)
-            ]
-            qs = (Pokemon.objects.filter(q)
-                .select_related("pokemon_species_id") # N+1 참조 해결
-                .annotate(rank_order=Case(*cases, output_field=IntegerField()))
-                .order_by("rank_order"))
-            return target_serializer(qs, many=True).data
-        # target 모델이 Pokemon이 아닌 경우
-        else:
-            for object in array:
-                q |= Q(id=object["id"])
-            # rank_cases: 순위 
-            rank_cases = [
-                When(id=object["id"], then=idx+1) for idx, object in enumerate(array)
-            ]
-            # val_cases: 채용률
-            val_cases = [
-                When(id=object["id"], then=float(object['val'])) for object in array
-            ]
-            qs = (target_model.objects.filter(q)
-                .annotate(rank_order=Case(*rank_cases, output_field=IntegerField()))
-                .annotate(use_rate=Case(*val_cases, output_field=FloatField()))
-                .order_by("rank_order"))
-            return target_serializer(qs, many=True).data
-    """
 
 class PokemonListCreate(generics.ListCreateAPIView):
     serializer_class = PokemonSerializer

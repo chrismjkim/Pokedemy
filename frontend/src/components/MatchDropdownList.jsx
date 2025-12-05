@@ -36,7 +36,7 @@ function MatchDropdownList() {
       if (match != "") {
         const res = await api.get(`/api/pdetails/${match}/`);
         setPokemonDetails(res.data);
-        console.log("TEST");
+        console.log("PokemonDetails setted");
       } else {
         setPokemonDetails("");
       } 

@@ -8,7 +8,7 @@ function PokemonCard({ pokemon }) {
   const type1Src =`${apiBase}${pokemon.type1_id.icon_url}`;
   const type2Src = pokemon?.type2_id?.icon_url
     ? `${apiBase}${pokemon.type2_id.icon_url}` : "";
-    
+
   const setSelectedPokemon = useStore((s) => s.setSelectedPokemon);
 
   return (
