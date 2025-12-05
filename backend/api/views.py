@@ -47,7 +47,7 @@ def annotate_detail_list(array, key_name):
         'seikaku': "nature", 
         'terastal': "type"
     }
-    array_to_dict = {}
+    ranked_dict = {}
     key = target_models[key_name]
     lookup = get_lookup(key)
     
@@ -55,21 +55,20 @@ def annotate_detail_list(array, key_name):
     if key=="pokemon": 
         for rank, p in enumerate(array):
             lu_key = p["id"] * 1000 + p["form"]
-            array_to_dict[lu_key] = copy.deepcopy(lookup[lu_key])
-            array_to_dict[lu_key]['rank_order'] = rank+1
+            ranked_dict[rank] = copy.deepcopy(lookup[lu_key])
+            ranked_dict[rank]['rank_order'] = rank+1
     # key_name이 pokemon이 아닌 경우
     else: 
         for rank, object in enumerate(array):
-            obj_id = str(object['id'])
+            lu_key = str(object['id'])
             try:
-                array_to_dict[obj_id] = copy.deepcopy(lookup[obj_id])
+                ranked_dict[rank] = copy.deepcopy(lookup[lu_key])
             except:
-                array_to_dict[obj_id] = copy.deepcopy(lookup[int(obj_id)])
-            array_to_dict[obj_id]['rank_order'] = rank+1
-            array_to_dict[obj_id]['usage_rate'] = object['val']
+                ranked_dict[rank] = copy.deepcopy(lookup[int(lu_key)])
+            ranked_dict[rank]['rank_order'] = rank+1
+            ranked_dict[rank]['usage_rate'] = object['val']
             
-    return array_to_dict
-    
+    return ranked_dict
 
 class PokemonListCreate(generics.ListCreateAPIView):
     serializer_class = PokemonSerializer
