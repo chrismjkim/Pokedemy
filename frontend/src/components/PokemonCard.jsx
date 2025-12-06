@@ -3,6 +3,7 @@ import { useStore } from "../store/Store";
 
 function PokemonCard({ pokemon }) {
   const apiBase = import.meta.env.VITE_API_URL;
+  const selected = useStore((s) => s.selectedPokemon);
 
   const spriteSrc = pokemon?.sprite_url ? `${apiBase}${pokemon.sprite_url}` : "";
   const type1Src =`${apiBase}${pokemon.type1_id.icon_url}`;
@@ -11,8 +12,14 @@ function PokemonCard({ pokemon }) {
 
   const setSelectedPokemon = useStore((s) => s.setSelectedPokemon);
 
+  const isSelected = selected?.id === pokemon.id && selected?.form === pokemon.form;
+
   return (
-    <button className="poke-card" type="button" onClick={() => setSelectedPokemon(pokemon)}>
+    <button
+      className={`poke-card ${isSelected ? "poke-card--selected" : ""}`}
+      type="button"
+      onClick={() => setSelectedPokemon(pokemon)}
+    >
       <div className="poke-profile">
         <div className="rank">#{pokemon.rank_order}</div>
         <div className="poke-sprite-wrap" aria-hidden={!spriteSrc}>

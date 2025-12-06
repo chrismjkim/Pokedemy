@@ -4,6 +4,7 @@ import react from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
+import "./styles/App.css"
 
 // import Login from "./pages/Login"
 // import Register from "./pages/Register"

@@ -5,9 +5,12 @@ export const useStore = create((set) => ({
   setSelectedPokemon: (pokemon) => set({ selectedPokemon: pokemon }),
   resetSelectedPokemon: () => set({ selectedPokemon: null }),
 
-  selectedMatch: "", // match의 cId 문자열
-  setSelectedMatch: (match_cid) => set({ selectedMatch: match_cid}),
+  selectedMatch: null, // Match 객체
+  setSelectedMatch: (match) => set({ selectedMatch: match}),
 
   pokemonDetails: null, // json
   setPokemonDetails: (json) => set({ pokemonDetails: json}),
+  
+  isLoadingPDetails: false,
+  setIsLoadingPDetails: (bool) => set({ isLoadingPDetails: bool })
 }));

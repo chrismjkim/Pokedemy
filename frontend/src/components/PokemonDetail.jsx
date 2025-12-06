@@ -7,6 +7,7 @@ function PokemonDetail () {
   const selectedPokemon = useStore((s) => s.selectedPokemon);
   const selectedMatch = useStore((s) => s.selectedMatch);
 
+
   if (!selectedPokemon) {
     return (
       <div className="home__content">
@@ -19,8 +20,8 @@ function PokemonDetail () {
   return (
     <div className="home__content">
       <p className="info-title">포켓몬 상세</p>
-      <div className="info-box poke-detail">
-        <div className="base-info">
+      <div className="info-box poke-detail detail-wrapper">
+        <div className="card-white">
           <p>{selectedPokemon.pokemon_species_id?.name_ko}</p>
           <p>HP: {selectedPokemon.hp}</p>
           <p>공격: {selectedPokemon.attack}</p>
@@ -29,7 +30,7 @@ function PokemonDetail () {
           <p>특수방어: {selectedPokemon.special_defense}</p>
           <p>스피드: {selectedPokemon.speed}</p>
         </div>
-        <PokemonStats />
+        <PokemonStats key={`${selectedMatch?.cid}`} />
       </div>
     </div>
   )

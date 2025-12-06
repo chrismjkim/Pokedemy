@@ -14,6 +14,9 @@ function MatchDropdownList() {
   const pokemonDetails = useStore((s) => s.pokemonDetails);
   const setPokemonDetails = useStore((s) => s.setPokemonDetails);
 
+  const isLoadingPDetails = useStore((s) => s.isLoadingPDetails);
+  const setIsLoadingPDetails = useStore((s) => s.setIsLoadingPDetails);
+
   const getMatches = async (rule) => {
     try {
       const res = await api.get(`/api/matches/${rule}/`);
@@ -21,9 +24,9 @@ function MatchDropdownList() {
       // 룰이 바뀔 때마다 해당 룰의 첫 번째 매치를 기본 선택값으로 반영해
       // 하위 랭킹 리스트가 즉시 갱신되도록 한다.
       if (res.data.length > 0) {
-        setMatch(res.data[0].cid);
+        setMatch(res.data[0]);
       } else {
-        setMatch("");
+        setMatch(null);
       }
     } catch (err) {
       console.error("Failed to fetch matches", err);
@@ -33,16 +36,19 @@ function MatchDropdownList() {
   
   const getPDetails = async (match) => {
     try {
-      if (match != "") {
-        const res = await api.get(`/api/pdetails/${match}/`);
+      if (match && match.cid) {
+        setIsLoadingPDetails(true);
+        const res = await api.get(`/api/pdetails/${match.cid}/`);
         setPokemonDetails(res.data);
         console.log("PokemonDetails setted");
+        setIsLoadingPDetails(false);
       } else {
         setPokemonDetails("");
-      } 
+      }
     } catch (err) {
       console.error("Failed to fetch further information", err);
       setError("세부정보를 불러오지 못했습니다.");
+      setIsLoadingPDetails(false);
     }
   };
   
@@ -53,7 +59,7 @@ function MatchDropdownList() {
 
   // 선택된 매치가 바뀔 때마다 상세 정보를 다시 불러온다
   useEffect(() => {
-    if (match) {
+    if (match && match.cid) {
       getPDetails(match);
     } else {
       setPokemonDetails("");
@@ -81,7 +87,7 @@ function MatchDropdownList() {
         </div>
         {/* 시즌 드롭다운 */}
         <select className="season-list text-body"
-          value={match}
+          value={match?.cid || ""}
           onChange={(e) => setMatch(e.target.value)}
         >
           {matches.map((m) => (
@@ -89,6 +95,11 @@ function MatchDropdownList() {
           ))}
 
         </select>
+        {match && (
+          <span>
+            총 {match.cnt}명, 마스터볼 이상 {match.rank_cnt}명
+          </span>
+        )}
       </div>
 
     </div>

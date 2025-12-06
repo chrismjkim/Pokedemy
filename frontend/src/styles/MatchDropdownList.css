@@ -25,6 +25,7 @@
   padding: 12px 16px;
   border-radius: 12px;
   background: #e5e5e5;
+
 }
 
 .radio-group {
@@ -40,6 +41,8 @@
   background: #fff;
   box-sizing: border-box;
   text-align: center;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .center-input {

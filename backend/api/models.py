@@ -46,6 +46,7 @@ class Nature(models.Model):
     lower_stat_id = models.ForeignKey('Stat', on_delete=models.SET_NULL, null=True, blank=True, db_column='lower_stat_id', related_name='lower_stat')
     like_berry_flavor_id = models.ForeignKey('BerryFlavor', on_delete=models.SET_NULL, null=True, blank=True, db_column='like_berry_flavor_id', related_name='like_berry_flavor')
     dislike_berry_flavor_id = models.ForeignKey('BerryFlavor', on_delete=models.SET_NULL, null=True, blank=True, db_column='dislike_berry_flavor_id', related_name='dislike_berry_flavor')
+    sprite_url = models.CharField(max_length=1000, null=True, blank=True)
 
 class PokemonSpecies(models.Model):
     """포켓몬 종"""

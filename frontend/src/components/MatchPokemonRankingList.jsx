@@ -5,20 +5,23 @@ import api from "../api";
 import PokemonCard from "./PokemonCard";
 import "../styles/MatchPokemonRankingList.css"
 
-// selectedMatch: cid 문자열
 function MatchPokemonRankingList() {
   const [pokemons, setPokemons] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const selectedMatch = useStore((s) => s.selectedMatch);
 
   const getPokemons = async (selectedMatch) => {
     try {
-      const res = await api.get(`/api/pokemons/${selectedMatch}/`);
+      setLoading(true);
+      const res = await api.get(`/api/pokemons/${selectedMatch.cid}/`);
       setPokemons(res.data);
     } catch (err) {
       console.error("Failed to fetch matches", err);
       setError("포켓몬 목록을 불러오지 못했습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,6 +34,11 @@ function MatchPokemonRankingList() {
 
   return (
     <div className="scrollable">
+      {loading && (
+        <div className="loading-overlay" aria-live="polite" aria-busy="true">
+          <div className="loading-spinner" />
+        </div>
+      )}
       {pokemons.map((p) => (
         <div key={p.id}>
           <PokemonCard pokemon={p} />

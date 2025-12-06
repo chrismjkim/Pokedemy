@@ -20,6 +20,14 @@ body {
 .text-body     { font-size: 16px; }
 .text-label    { font-size: 12px; }
 
+/* 스프라이트 크기 */
+.sprite-xs { width: 28px; height: 28px; }
+.sprite-s { width: 36px; height: 36px; }
+.sprite-m { width: 48px; height: 48px; }
+.sprite-l { width: 64px; height: 64px; }
+.sprite-xl { width: 84px; height: 84px; }
+.sprite-xxl { width: 108px; height: 108px; }
+
 /* 배경색 세트(외곽선 없음) */
 .bg-white    { background: #ffffff; border: none; }
 .bg-gray     { background: #e5e5e5; border: none; }
@@ -36,3 +44,8 @@ body {
   font-size: 20px;
   font-weight: 600;
 }
+
+/* Figma auto-layout의 fill과 대응*/
+.fill-column { display: flex; flex-direction: column; width: 100%; }
+.fill-row { display: flex; flex-direction: row; width: 100%; }
+
