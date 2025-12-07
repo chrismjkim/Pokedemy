@@ -6,7 +6,7 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <h1 className="navbar__title">Navbar</h1>
+      <h1 className="navbar__title">Pokédemy</h1>
     </nav>
   );
 }

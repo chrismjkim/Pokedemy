@@ -88,7 +88,10 @@ function MatchDropdownList() {
         {/* 시즌 드롭다운 */}
         <select className="season-list text-body"
           value={match?.cid || ""}
-          onChange={(e) => setMatch(e.target.value)}
+          onChange={(e) => {
+            const next = matches.find((m) => m.cid === e.target.value);
+            setMatch(next || null);
+          }}
         >
           {matches.map((m) => (
             <option className="center-input" key={m.cid} value={m.cid}>{m.name} ({m.start} - {m.end})</option>

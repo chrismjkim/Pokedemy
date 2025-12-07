@@ -70,7 +70,6 @@ function PokemonDetail () {
               </div>
               <div className="ability-desc">
                 <div className="ability-desc__title">
-                  {currentAbility?.name_ko || currentAbility?.name}
                   {abilityUsage && <span className="ability-usage">사용률 {abilityUsage}</span>}
                 </div>
                 <div className="ability-desc__body">{abilityDesc}</div>
@@ -91,7 +90,7 @@ function PokemonDetail () {
                   <td>
                     <div className="stat-bar-row">
                       <div className="stat-bar hp" style={{width: `${selectedPokemon.hp / 2.5}%`}} />
-                      <div className="stat-num">{selectedPokemon.hp}</div>
+                      <div className="stat-num text-body">{selectedPokemon.hp}</div>
                     </div>
                   </td>
                 </tr>
@@ -100,7 +99,7 @@ function PokemonDetail () {
                   <td>
                     <div className="stat-bar-row">
                       <div className="stat-bar atk" style={{width: `${selectedPokemon.attack / 2.5}%`}} />
-                      <div className="stat-num">{selectedPokemon.attack}</div>
+                      <div className="stat-num text-body">{selectedPokemon.attack}</div>
                     </div>
                   </td>
                 </tr>
@@ -109,7 +108,7 @@ function PokemonDetail () {
                   <td>
                     <div className="stat-bar-row">
                       <div className="stat-bar def" style={{width: `${selectedPokemon.defense / 2.5}%`}} />
-                      <div className="stat-num">{selectedPokemon.defense}</div>
+                      <div className="stat-num text-body">{selectedPokemon.defense}</div>
                     </div>
                   </td>
                 </tr>
@@ -118,7 +117,7 @@ function PokemonDetail () {
                   <td>
                     <div className="stat-bar-row">
                       <div className="stat-bar spa" style={{width: `${selectedPokemon.special_attack / 2.5}%`}} />
-                      <div className="stat-num">{selectedPokemon.special_attack}</div>
+                      <div className="stat-num text-body">{selectedPokemon.special_attack}</div>
                     </div>
                   </td>
                 </tr>
@@ -127,7 +126,7 @@ function PokemonDetail () {
                   <td>
                     <div className="stat-bar-row">
                       <div className="stat-bar spd" style={{width: `${selectedPokemon.special_defense / 2.5}%`}} />
-                      <div className="stat-num">{selectedPokemon.special_defense}</div>
+                      <div className="stat-num text-body">{selectedPokemon.special_defense}</div>
                     </div>
                   </td>
                 </tr>
@@ -136,7 +135,7 @@ function PokemonDetail () {
                   <td>
                     <div className="stat-bar-row">
                       <div className="stat-bar spe" style={{width: `${selectedPokemon.speed / 2.5}%`}} />
-                      <div className="stat-num">{selectedPokemon.speed}</div>
+                      <div className="stat-num text-body">{selectedPokemon.speed}</div>
                     </div>
                   </td>
                 </tr>
