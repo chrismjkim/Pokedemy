@@ -6,7 +6,13 @@ import PokemonStats from "./PokemonStats";
 function PokemonDetail () {
   const selectedPokemon = useStore((s) => s.selectedPokemon);
   const selectedMatch = useStore((s) => s.selectedMatch);
+  const pdetails = useStore((s) => s.pokemonDetails);
   const [activeAbilityIdx, setActiveAbilityIdx] = useState(0);
+  const [abilityManual, setAbilityManual] = useState(false);
+
+  const p_id = selectedPokemon ? String(selectedPokemon.pokemon_species_id.id) : null;
+  const p_form = selectedPokemon ? String(selectedPokemon.form ?? 0) : null;
+  const detail = p_id && p_form ? pdetails?.[p_id]?.[p_form] : null;
 
   if (!selectedPokemon) {
     return (
@@ -23,9 +29,37 @@ function PokemonDetail () {
     selectedPokemon.ability2_id,
     selectedPokemon.ability_hidden_id,
   ].filter(Boolean);
-  const currentAbility = abilities[activeAbilityIdx] || abilities[0];
+  // 현재 선택된 특성
+  const abilityUsage = detail?.temoti?.tokusei ? Object.values(detail.temoti.tokusei) : [];
+  const usageById = new Map(
+    abilityUsage.map((u) => [String(u.id), u.usage_rate ?? u.val ?? null])
+  );
+  const usages = abilities.map((ab) => usageById.get(String(ab.id)) ?? null);
+
+  // 페이지 로딩 시 가장 사용률이 높은 특성 버튼이 선택되어 설명이 보여지도록 함
+  const topUsageIdx = usages.reduce((bestIdx, val, idx) => {
+    const bestVal = usages[bestIdx];
+    const cur = val == null ? -1 : Number(val);
+    const best = bestVal == null ? -1 : Number(bestVal);
+    return cur > best ? idx : bestIdx;
+  }, 0);
+  useEffect(() => {
+    if (!abilities.length) return;
+    if (!abilityManual) {
+      setActiveAbilityIdx(topUsageIdx);
+    }
+  }, [abilities.length, topUsageIdx, abilityManual]);
+
+  useEffect(() => {
+    setAbilityManual(false);
+    if (abilities.length) {
+      setActiveAbilityIdx(topUsageIdx);
+    }
+  }, [selectedPokemon, topUsageIdx, abilities.length]);
+  
+  const currentAbility = abilities[activeAbilityIdx] || abilities[topUsageIdx] || abilities[0];
   const abilityDesc = currentAbility?.effect_entry_ko || currentAbility?.effect_entry || "설명이 없습니다.";
-  const abilityUsage = currentAbility?.usage_rate ? `${currentAbility.usage_rate}%` : null;
+  
 
   return (
     <div className="home__content">
@@ -43,35 +77,39 @@ function PokemonDetail () {
           </div>
 
           {/* 중앙 정보/특성 */}
-          <div className="detail-main">
+          <div className="detail-main fill-column">
             <div className="detail-header">
               <div className="detail-rank">#{selectedPokemon.rank_order}</div>
               <div>
                 <div className="detail-name">{selectedPokemon.pokemon_species_id?.name_ko}</div>
                 <div className="detail-sub">No. {String(selectedPokemon.pokemon_species_id?.id || "").padStart(4, "0")}</div>
-                {selectedPokemon.name_ko && <div className="detail-sub">{selectedPokemon.name_ko}</div>}
+                {selectedPokemon.name_ko ? (
+                  <div className="detail-sub">{selectedPokemon.name_ko}</div>
+                ) : (
+                  <div className="detail-sub">&nbsp;</div>
+                )}
               </div>
             </div>
-
-            <div className="ability-box">
+            {/*특성 박스*/}
+            <div className="ability-box fill-column">
               <div className="ability-label">특성</div>
               <div className="ability-tabs">
                 {abilities.map((ab, idx) => (
                   <button
-                    key={ab.id}
+                    key={ab.id} 
                     type="button"
                     className={`ability-tab ${activeAbilityIdx === idx ? "active" : ""}`}
-                    onClick={() => setActiveAbilityIdx(idx)}
+                    onClick={() => {
+                      setAbilityManual(true);
+                      setActiveAbilityIdx(idx);
+                    }}
                   >
                     {ab.name_ko || ab.name}
-                    {ab.usage_rate ? ` (${ab.usage_rate}%)` : ""}
+                    {(idx === activeAbilityIdx) ? ` (${(usages[idx] !== null) ? usages[idx] : '0.0'}%)` : ""}
                   </button>
                 ))}
               </div>
               <div className="ability-desc">
-                <div className="ability-desc__title">
-                  {abilityUsage && <span className="ability-usage">사용률 {abilityUsage}</span>}
-                </div>
                 <div className="ability-desc__body">{abilityDesc}</div>
               </div>
             </div>

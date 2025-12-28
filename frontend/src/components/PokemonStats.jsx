@@ -15,18 +15,18 @@ function PokemonStats () {
 
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("stats"); // stats | matchup
-
+  
   const selected = useStore((s) => s.selectedPokemon);
   const selectedMatch = useStore((s) => s.selectedMatch);
   const pdetails = useStore((s) => s.pokemonDetails);
   const isLoadingPDetails = useStore((s) => s.isLoadingPDetails);
-
+  
   const p_id = selected ? String(selected.pokemon_species_id.id) : null;
   const p_form = selected ? String(selected.form ?? 0) : null;
   const detail = p_id && p_form ? pdetails?.[p_id]?.[p_form] : null;
-
+  
   if (!detail) return <div className="">포켓몬을 선택하세요</div>;
-
+  
   const moves = detail?.temoti?.waza
   ? Object.values(detail.temoti.waza) : [];
 
