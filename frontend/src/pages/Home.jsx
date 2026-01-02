@@ -1,8 +1,8 @@
 import React from "react";
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/pokedex/Sidebar";
 import "../styles/Home.css";
-import PokemonDetail from "../components/PokemonDetail";
+import PokemonDetail from "../components/pokedex/PokemonDetail";
 
 function Home() {
 

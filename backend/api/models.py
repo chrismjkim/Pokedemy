@@ -80,6 +80,7 @@ class Pokemon(models.Model):
     form = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=1000, null=True, blank=True)
     name_ko = models.CharField(max_length=1000, null=True, blank=True)
+    name_smogon = models.CharField(max_length=1000, null=True, blank=True)
     is_independent = models.BooleanField(null=True, blank=True)
     hp = models.IntegerField(null=True, blank=True)
     attack = models.IntegerField(null=True, blank=True)

@@ -18,6 +18,7 @@ body {
 .text-title    { font-size: 24px; }
 .text-subtitle { font-size: 20px; }
 .text-body     { font-size: 16px; }
+.text-small    { font-size: 14px; }
 .text-label    { font-size: 12px; }
 
 /* 스프라이트 크기 */

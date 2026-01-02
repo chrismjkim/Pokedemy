@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useStore } from "../store/Store";
-import api from "../api";
+import { useStore } from "../../store/Store";
+import api from "../../api";
 
-import "../styles/PokemonStats.css";
+import "../../styles/PokemonStats.css";
 
 import StatsAbilityList from "./StatsList/StatsAbilityList";
 import StatsItemList from "./StatsList/StatsItemList";
@@ -21,7 +21,11 @@ function PokemonStats () {
   const pdetails = useStore((s) => s.pokemonDetails);
   const isLoadingPDetails = useStore((s) => s.isLoadingPDetails);
   
-  const p_id = selected ? String(selected.pokemon_species_id.id) : null;
+  const speciesId =
+    selected?.pokemon_species_id?.id ??
+    selected?.pokemon_species_id ??
+    null;
+  const p_id = speciesId != null ? String(speciesId) : null;
   const p_form = selected ? String(selected.form ?? 0) : null;
   const detail = p_id && p_form ? pdetails?.[p_id]?.[p_form] : null;
   

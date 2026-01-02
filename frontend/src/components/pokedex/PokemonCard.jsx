@@ -1,12 +1,14 @@
-import "../styles/PokemonCard.css"
-import { useStore } from "../store/Store";
+import "../../styles/PokemonCard.css"
+import { useStore } from "../../store/Store";
 
 function PokemonCard({ pokemon }) {
   const apiBase = import.meta.env.VITE_API_URL;
   const selected = useStore((s) => s.selectedPokemon);
 
   const spriteSrc = pokemon?.sprite_url ? `${apiBase}${pokemon.sprite_url}` : "";
-  const type1Src =`${apiBase}${pokemon.type1_id.icon_url}`;
+  const type1Src = pokemon?.type1_id?.icon_url
+    ? `${apiBase}${pokemon.type1_id.icon_url}`
+    : "";
   const type2Src = pokemon?.type2_id?.icon_url
     ? `${apiBase}${pokemon.type2_id.icon_url}` : "";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useStore } from "../store/Store"; 
-import "../styles/Sidebar.css";
-import api from "../api";
+import { useStore } from "../../store/Store"; 
+import "../../styles/Sidebar.css";
+import api from "../../api";
 import MatchDropdownList from "./MatchDropdownList";
 import MatchPokemonRankingList from "./MatchPokemonRankingList";
 
