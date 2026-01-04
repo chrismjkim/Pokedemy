@@ -1,104 +1,182 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { calculate, Generations, Pokemon, Move, Field} from "@smogon/calc";
+import { useCalcStore } from "../store/calcStore";
+import api from "../api";
 import Navbar from "../components/Navbar";
 import PokemonForm from "../components/calculator/PokemonForm";
 import FieldForm from "../components/calculator/FieldForm";
 import "../styles/Calculator.css";
 
-const resultItems = [
-  {
-    icon: "👻",
-    tone: "ghost",
-    name: "아스트랄비트",
-    damage: "39060",
-    detail: "확정 1타 (104.85% ~ 122.25%)",
-  },
-  {
-    icon: "🎯",
-    tone: "psychic",
-    name: "사이코키네시스",
-    damage: "29295",
-    detail: "87.5% 난수 1타 (87.33% ~ 104.85%)",
-  },
-  {
-    icon: "✨",
-    tone: "fairy",
-    name: "드레인키스",
-    damage: "10850",
-    detail: "87.5% 난수 1타 (47.50% ~ 54.50%)",
-  },
-  {
-    icon: "⭐",
-    tone: "normal",
-    name: "사이코쇼크",
-    damage: "26050",
-    detail: "14.2% 난수 2타 (32.50% ~ 50.50%)",
-  },
-];
-
-const compareRows = [
-  { label: "스피드", left: "201", right: "160" },
-  { label: "물리내구", left: "48000", right: "87000" },
-  { label: "특수내구", left: "39600", right: "55520" },
-];
-
-const pokemonNameOptions = ["버드렉스 (흑마 탄 모습)", "무쇠바퀴", "코라이돈"];
-const abilityOptions = ["스펙터럴라이더", "리베로", "재생력"];
-const itemOptions = ["생명의구슬", "구애스카프", "기합의띠"];
-const natureOptions = ["고집", "겁쟁이", "조심"];
-const typeOptions = ["고스트", "에스퍼", "드래곤"];
-const moveOptions = ["아스트랄비트", "사이코키네시스", "드레인키스"];
-
 function Calculator() {
+
+  const apiBase = import.meta.env.VITE_API_URL;
+
+  const compareRows = [
+    { label: "스피드", left: "201", right: "160" },
+    { label: "물리내구", left: "48000", right: "87000" },
+    { label: "특수내구", left: "39600", right: "55520" },
+  ];
+
+  // const [pokemonOptions, setPokemonOptions] = useState(null);
+
+  const lookups = useCalcStore((s) => s.lookups);
+  const lookupsLoaded = useCalcStore((s) => s.lookupsLoaded);
+  const setLookupsLoaded = useCalcStore((s) => s.setLookupsLoaded);
+  const setLookups = useCalcStore((s) => s.setLookups);
+  
+  const [attackerMoves, setAttackerMoves] = useState([]);
+  const [defenderMoves, setDefenderMoves] = useState([]);
+
+  /* 이 옵션들은 포켓몬마다 다를 수 있으므로 추후엔 PokemonForm에서 선언 */
+  const pokemonOptions = lookups?.pokemon
+    ? Object.values(lookups.pokemon).map((obj) => {
+        const species = obj.pokemon_species_id?.name_ko;
+        const form = obj.name_ko;
+        const label = form ? `${species} (${form})` : species;
+        
+        const species_smogon = obj.pokemon_species_id?.name;
+        const form_smogon = obj.name_smogon;
+        const value = form_smogon ? `${species_smogon}-${form_smogon}` : species_smogon; 
+
+        // 여기에서 만약 p 전체를 전달해버린다면?
+        return { label: label, value: value, object: obj};
+      })
+    : [];
+
+  const abilityOptions = lookups?.ability
+    ? Object.values(lookups.ability).map((obj) => {
+      return { label: obj.name_ko, value: obj.name, object: obj}
+    })
+    : [];
+
+  const itemOptions = lookups?.item
+    ? Object.values(lookups.item).map((obj) => {
+          const label = obj.name_ko || "";
+          const value = obj.name || "";
+          if (!label.trim() || !value.trim()) return null;
+          return { label, value, object: obj};
+        })
+        .filter(Boolean)
+    : [];
+  
+  const natureOptions = lookups?.nature
+    ? Object.values(lookups.nature).map((obj) => {
+      const label = `${obj.name_ko} ( +${obj.raise_stat_id.name_ko}, -${obj.lower_stat_id.name_ko})`;
+      return { label: label, value: obj.name, object: obj};
+    })
+    : [];
+  const typeOptions = lookups?.type
+    ? Object.values(lookups.type).map((obj) => {
+      return { label: obj.name_ko, value: obj.name, object: obj};
+    })
+    : [];
+  const moveOptions = lookups?.move
+    ? Object.values(lookups.move).map((obj) => {
+      return { label: obj.name_ko, value: obj.name, object: obj};
+    })
+    : [];
+
+  const gen = Generations.get(9);
+  const attacker = useCalcStore((s) => s.attacker);
+  const defender = useCalcStore((s) => s.defender);
+  const move = useCalcStore((s) => s.attacker.moves[0])
+  const field = useCalcStore((s) => s.field);
+
+  const { result_atk, result_def } = useMemo(() => {
+    const empty = {
+      result_atk: [null, null, null, null],
+      result_def: [null, null, null, null],
+    };
+    try {
+      if (!attacker?.species || !defender?.species) {
+        return empty;
+      }
+
+      const buildResults = (atk, def) =>
+        Array.from({ length: 4 }, (_, idx) => {
+          const move = atk?.moves?.[idx];
+          if (!move?.name) return null;
+          try {
+            return calculate(
+              gen,
+              new Pokemon(gen, atk.species, atk),
+              new Pokemon(gen, def.species, def),
+              new Move(gen, move.name, move),
+              new Field(field)
+            );
+          } catch (err) {
+            console.warn("damage calculation failed", err);
+            return null;
+          }
+        });
+      return {
+        result_atk: buildResults(attacker, defender),
+        result_def: buildResults(defender, attacker),
+      };
+    } catch (err) {
+      console.warn("damage calculation failed", err);
+      return empty;
+    }
+  }, [gen, attacker, defender, field]);
+
+  const getLookups = async () => {
+    try {
+      if (lookupsLoaded) {
+        return;
+      }
+      const res = await api.get(`/api/lookups/`);
+      setLookups(res.data);
+      setLookupsLoaded(true);
+
+    } catch (err) {
+      console.error("Failed to fetch lookups", err);
+      setError("데이터를 불러오지 못했습니다.");
+    } 
+      finally {
+    }
+  };
+
+  useEffect(() => {
+    getLookups();
+  }, [lookupsLoaded, setLookups]);
+
+
 
   return (
     <div className="calculator bg-gray-soft">
       <Navbar />
       <div className="calculator__body flex-col">
-        <datalist id="pokemon-name-options">
-          {pokemonNameOptions.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-        <datalist id="ability-options">
-          {abilityOptions.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-        <datalist id="item-options">
-          {itemOptions.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-        <datalist id="nature-options">
-          {natureOptions.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-        <datalist id="type-options">
-          {typeOptions.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-        <datalist id="move-options">
-          {moveOptions.map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
         <section className="calculator__top-grid">
           <div className="calc-panel bg-white flex-col">
             <h3 className="calc-panel__title text-body">공격측 계산 결과</h3>
             <ul className="calc-result-list flex-col">
-              {resultItems.map((item) => (
-                <li className="calc-result-item bg-gray-soft" key={`${item.name}-${item.damage}`}>
-                  <span className={`calc-result-icon sprite-xs text-body calc-result-icon--${item.tone}`}>
-                    {item.icon}
-                  </span>
+              {attackerMoves.map((move) => (
+                <li
+                  className="calc-result-item bg-gray-soft"
+                  key={`def-${move.name}`}
+                >
+                  <div
+                    className="calc-sprite sprite-m flex-row-center"
+                    aria-hidden="true"
+                  >
+                    {move.type_id.icon_url && (
+                      <img
+                        src={`${apiBase}${move.type_id.icon_url}`}
+                        alt={move.type_id.name_ko || "type"}
+                        className="poke-sprite"
+                      />
+                    )}
+                  </div>
                   <div className="calc-result-text flex-col text-body">
                     <div className="calc-result-line">
-                      <span className="calc-result-name text-body">{item.name}</span>
-                      <span className="calc-result-damage text-body">{item.damage}</span>
+                      <span className="calc-result-name text-body">
+                        {move.name_ko}
+                      </span>
+                      <span className="calc-result-damage text-body">
+                        계산결과
+                      </span>
                     </div>
-                    <div className="calc-result-sub text-body">{item.detail}</div>
+                    <div className="calc-result-sub text-body"></div>
                   </div>
                 </li>
               ))}
@@ -127,22 +205,66 @@ function Calculator() {
                 샘플 저장
               </button>
             </div>
+            {/* 
+            result 테스트용 출력 
+            <div>{result.attacker.species.name}</div>
+            <div>{result.attacker.ability}</div>
+            <div>{result.attacker.item}</div>
+            <div>{result.attacker.nature}</div>
+            <div>{result.rawDesc.moveName}</div>
+            <div>{result.field.gameType || ""}</div>
+            <div>{result.field.terrain}</div>
+            <div>{result.field.weather}</div>
+            <div>{result.damage[0]}</div>
+            <div>{result.move.isCrit === true ? "true" : "false"}</div>
+            */}
+            <div>공격측: {result_atk[0].attacker.species.name}</div>
+            <div>수비측: {result_atk[0].defender.species.name}</div>
+            <div>
+              수비측 내구력:{" "}
+              {(result_atk[0].defender.stats.hp *
+                result_atk[0].defender.stats.def) /
+                0.4114}
+            </div>
+            <div>
+              결정력:{" "}
+              {(result_atk[0].damage[7] * result_atk[0].defender.stats.def) /
+                0.411}
+            </div>
+            <div>최저 데미지: {result_atk[0].damage[0]}</div>
+            <div>최고 데미지: {result_atk[0].damage[15]}</div>
           </div>
 
           <div className="calc-panel bg-white flex-col">
             <h3 className="calc-panel__title text-body">수비측 계산 결과</h3>
             <ul className="calc-result-list flex-col">
-              {resultItems.map((item) => (
-                <li className="calc-result-item bg-gray-soft" key={`def-${item.name}-${item.damage}`}>
-                  <span className={`calc-result-icon sprite-xs text-body calc-result-icon--${item.tone}`}>
-                    {item.icon}
-                  </span>
+              {defenderMoves.map((move) => (
+                <li
+                  className="calc-result-item bg-gray-soft"
+                  key={`def-${move.name}`}
+                >
+                  <div
+                    className="calc-sprite sprite-m flex-row-center"
+                    aria-hidden="true"
+                  >
+                    {move.type_id.icon_url && (
+                      <img
+                        src={`${apiBase}${move.type_id.icon_url}`}
+                        alt={move.type_id.name_ko || "type"}
+                        className="poke-sprite"
+                      />
+                    )}
+                  </div>
                   <div className="calc-result-text flex-col text-body">
                     <div className="calc-result-line">
-                      <span className="calc-result-name text-body">{item.name}</span>
-                      <span className="calc-result-damage text-body">{item.damage}</span>
+                      <span className="calc-result-name text-body">
+                        {move.name_ko}
+                      </span>
+                      <span className="calc-result-damage text-body">
+                        계산결과
+                      </span>
                     </div>
-                    <div className="calc-result-sub text-body">{item.detail}</div>
+                    <div className="calc-result-sub text-body"></div>
                   </div>
                 </li>
               ))}
@@ -151,9 +273,31 @@ function Calculator() {
         </section>
 
         <section className="calculator__bottom-grid">
-          <PokemonForm side={ "공격측" }/>
+          <PokemonForm
+            sideKey="attacker"
+            pokemonOptions={pokemonOptions}
+            abilityOptions={abilityOptions}
+            itemOptions={itemOptions}
+            natureOptions={natureOptions}
+            typeOptions={typeOptions}
+            moveOptions={moveOptions}
+            result={result_atk[0]}
+            moves={attackerMoves}
+            setMoves={setAttackerMoves}
+          />
           <FieldForm />
-          <PokemonForm side={ "수비측" }/>
+          <PokemonForm
+            sideKey="defender"
+            pokemonOptions={pokemonOptions}
+            abilityOptions={abilityOptions}
+            itemOptions={itemOptions}
+            natureOptions={natureOptions}
+            typeOptions={typeOptions}
+            moveOptions={moveOptions}
+            result={result_atk[0]}
+            moves={defenderMoves}
+            setMoves={setDefenderMoves}
+          />
         </section>
       </div>
     </div>

@@ -1,65 +1,194 @@
-import { React, useState } from "react";
+import { React, useMemo, useState } from "react";
+import ListInput from "../ListInput";
+import { useCalcStore } from "../../store/calcStore";
 import * as calc from "../../calculation";
-function PokemonForm( {side} ) {
 
-  const statRows = [
-    { label: "HP", base: 120, iv: 31, ev: 0, stage: 0, final: 181 },
-    { label: "공격", base: 90, iv: 31, ev: 0, stage: 0, final: 94 },
-    { label: "방어", base: 80, iv: 31, ev: 0, stage: 0, final: 88 },
-    { label: "특수공격", base: 135, iv: 31, ev: 0, stage: 0, final: 201 },
-    { label: "특수방어", base: 90, iv: 31, ev: 0, stage: 0, final: 94 },
-    { label: "스피드", base: 110, iv: 31, ev: 0, stage: 0, final: 201 },
-  ];
+function PokemonForm({
+  sideKey,
+  pokemonOptions = [],
+  abilityOptions = [],
+  itemOptions = [],
+  natureOptions = [],
+  typeOptions = [],
+  moveOptions = [],
+  result = {},
+  setMoves,
+}) {
+  const apiBase = import.meta.env.VITE_API_URL;
+  const [spriteSrc, setSpriteSrc] = useState("");
+
   const moveRows = ["기술 1", "기술 2", "기술 3", "기술 4"];
+  const side = useCalcStore((s) => s[sideKey]);
+  const sideLabel = sideKey === "attacker" ? "공격측" : "수비측";
+
+  const setPokemonField = useCalcStore((s) => s.setPokemonField);
+  const setStat = useCalcStore((s) => s.setStat);
+  const setMoveField = useCalcStore((s) => s.setMoveField);
+
+  const s = sideKey === "attacker" ? result?.attacker : result?.defender;
+  const baseStats = s?.species?.baseStats ?? {
+    hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0,
+  };
+  const finStats = s?.stats ?? {
+    hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0,
+  };
+  
+  // 스탯 테이블 정의
+  const statRows = [
+    {
+      label: "HP",
+      key: "hp",
+      base: baseStats.hp,
+      iv: side.ivs.hp,
+      ev: side.evs.hp,
+      stage: 0,
+      final: finStats.hp,
+    },
+    {
+      label: "공격",
+      key: "atk",
+      base: baseStats.atk,
+      iv: side.ivs.atk,
+      ev: side.evs.atk,
+      stage: side.boosts.atk,
+      final: finStats.atk,
+    },
+    {
+      label: "방어",
+      key: "def",
+      base: baseStats.def,
+      iv: side.ivs.def,
+      ev: side.evs.def,
+      stage: side.boosts.def,
+      final: finStats.def,
+    },
+    {
+      label: "특수공격",
+      key: "spa",
+      base: baseStats.spa,
+      iv: side.ivs.spa,
+      ev: side.evs.spa,
+      stage: side.boosts.spa,
+      final: finStats.spa,
+    },
+    {
+      label: "특수방어",
+      key: "spd",
+      base: baseStats.spd,
+      iv: side.ivs.spd,
+      ev: side.evs.spd,
+      stage: side.boosts.spd,
+      final: finStats.spd,
+    },
+    {
+      label: "스피드",
+      key: "spe",
+      base: baseStats.spe,
+      iv: side.ivs.spe,
+      ev: side.evs.spe,
+      stage: side.boosts.spe,
+      final: finStats.spe,
+    },
+  ];
+
+  const pokemonByValue = useMemo(
+    () => new Map(pokemonOptions.map((opt) => [opt.value, opt.object])),
+    [pokemonOptions]
+  );
+
+  const moveByValue = useMemo(
+    () => new Map(moveOptions.map((opt) => [opt.value, opt.object])),
+    [moveOptions]
+  );
+
   const leftEVs = 510 - calc.sumEVs({statRows});
+  const resolveMoveLabel = (value) => {
+    const found = moveOptions.find((opt) => {
+      if (opt == null) return false;
+      if (typeof opt === "string" || typeof opt === "number") {
+        return String(opt) === String(value);
+      }
+      const optValue = opt.value ?? opt.name ?? opt.label ?? "";
+      return String(optValue) === String(value);
+    });
+    if (!found) return value ?? "";
+    if (typeof found === "string" || typeof found === "number") {
+      return String(found);
+    }
+    return String(found.label ?? found.name ?? found.value ?? value ?? "");
+  };
+
   return (
     <div className="calc-panel bg-white flex-col">
-      <h3 className="calc-panel__title text-body">{side}</h3>
+      <h3 className="calc-panel__title text-body">{sideLabel}</h3>
       <form className="calc-side-form flex-col">
         <div className="calc-side-header bg-gray-soft">
           <div
             className="calc-sprite sprite-m bg-gray flex-row-center text-body"
             aria-hidden="true"
           >
-            🐉
+            {spriteSrc && (
+              <img
+                src={ spriteSrc }
+                alt={ result.attacker.name || "pokemon" }
+                className="poke-sprite"
+              />
+            )}
           </div>
-          <input
-            className="calc-input calc-input--title text-body"
-            list="pokemon-name-options"
-            aria-label="공격측 포켓몬 이름"
+          <ListInput
+            options={pokemonOptions}
+            value={side.species || ""}
+            inputClassName="calc-input calc-input--title text-body"
+            ariaLabel={`${sideLabel} 포켓몬 이름`}
+            onValueChange={(v) => {
+              setPokemonField(sideKey, "species", v);
+              const obj = pokemonByValue.get(v);
+              const sprite = obj?.sprite_url;
+              setSpriteSrc(sprite ? `${apiBase}${sprite}` : "");
+              console.log(spriteSrc);
+            }}
           />
         </div>
         <div className="calc-info-grid">
           <div className="calc-info-row">
             <span className="calc-info-label text-small">특성</span>
-            <input
-              className="calc-input text-small"
-              list="ability-options"
-              aria-label="특성"
+            <ListInput
+              options={abilityOptions}
+              inputClassName="calc-input text-small"
+              ariaLabel="특성"
+              value={side.ability || ""}
+              onValueChange={(v) => setPokemonField(sideKey, "ability", v)}
             />
           </div>
           <div className="calc-info-row">
             <span className="calc-info-label text-small">지닌물건</span>
-            <input
-              className="calc-input text-small"
-              list="item-options"
-              aria-label="지닌물건"
+            <ListInput
+              options={itemOptions}
+
+              inputClassName="calc-input text-small"
+              ariaLabel="지닌물건"
+              value={side.item || ""}
+              onValueChange={(v) => setPokemonField(sideKey, "item", v)}
             />
           </div>
           <div className="calc-info-row">
             <span className="calc-info-label text-small">성격</span>
-            <input
-              className="calc-input text-small"
-              list="nature-options"
-              aria-label="성격"
+            <ListInput
+              options={natureOptions}
+              inputClassName="calc-input text-small"
+              ariaLabel="성격"
+              value={side.nature || ""}
+              onValueChange={(v) => setPokemonField(sideKey, "nature", v)}
             />
           </div>
           <div className="calc-info-row">
             <span className="calc-info-label text-small">테라스탈</span>
-            <input
-              className="calc-input text-small"
-              list="type-options"
-              aria-label="테라스탈"
+            <ListInput
+              options={typeOptions}
+              inputClassName="calc-input text-small"
+              ariaLabel="테라스탈"
+              value={side.teraType || ""}
+              onValueChange={(v) => setPokemonField(sideKey, "teraType", v)}
             />
           </div>
         </div>
@@ -102,7 +231,15 @@ function PokemonForm( {side} ) {
                     min="0"
                     max="31"
                     step="1"
-                    defaultValue={row.iv}
+                    value={row.iv}
+                    onChange={(event) =>
+                      setStat(
+                        sideKey,
+                        "ivs",
+                        row.key,
+                        Number(event.target.value)
+                      )
+                    }
                     aria-label={`${row.label} 개체값`}
                   />
                 </td>
@@ -113,20 +250,38 @@ function PokemonForm( {side} ) {
                     min="0"
                     max="252"
                     step="4"
-                    defaultValue={row.ev}
+                    value={row.ev}
+                    onChange={(event) =>
+                      setStat(
+                        sideKey,
+                        "evs",
+                        row.key,
+                        Number(event.target.value)
+                      )
+                    }
                     aria-label={`${row.label} 노력치`}
                   />
                 </td>
                 <td>
-                  <input
-                    className="calc-input text-small"
-                    type="number"
-                    min="-6"
-                    max="6"
-                    step="1"
-                    defaultValue={row.stage}
-                    aria-label={`${row.label} 랭크`}
-                  />
+                  {row.label !== "HP" ? (
+                    <input
+                      className="calc-input text-small"
+                      type="number"
+                      min="-6"
+                      max="6"
+                      step="1"
+                      value={row.stage}
+                      onChange={(event) =>
+                        setStat(
+                          sideKey,
+                          "boosts",
+                          row.key,
+                          Number(event.target.value)
+                        )
+                      }
+                      aria-label={`${row.label} 랭크`}
+                    />
+                  ) : null}
                 </td>
                 <td>{row.final}</td>
               </tr>
@@ -143,19 +298,39 @@ function PokemonForm( {side} ) {
         </table>
 
         <div className="calc-move-block flex-col">
-          {moveRows.map((label) => (
+          {moveRows.map((label, index) => (
             <div className="calc-move-row" key={`atk-${label}`}>
               <span className="calc-move-label text-small">{label}</span>
-              <input
-                className="calc-input text-small"
-                list="move-options"
-                aria-label={`${label} 이름`}
+              <ListInput
+                options={moveOptions}
+                inputClassName="calc-input text-small"
+                ariaLabel={`${label} 이름`}
+                value={side.moves?.[index]?.name || ""}
+                onValueChange={(v) => {
+                  setMoveField(sideKey, index, "name", v);
+                  if (typeof setMoves === "function") {
+                    setMoves((prev) => {
+                      const next = [...prev]; // ...: prev를 얕은 복사
+                      next[index] = moveByValue.get(v); // 복사된 배열인 next 사용
+                      return next;
+                    });
+                  }
+                }}
+                onInputChange={(v) => setMoveField(sideKey, index, "name", v)}
               />
               <label className="calc-check text-label">
-                <input type="checkbox" /> Z기술
+                <input
+                  type="checkbox"
+                  onChange={(v) => setMoveField(sideKey, index, "isZ", v)}
+                />{" "}
+                Z기술
               </label>
               <label className="calc-check text-label">
-                <input type="checkbox" /> 급소
+                <input
+                  type="checkbox"
+                  onChange={(v) => setMoveField(sideKey, index, "isCrit", v)}
+                />{" "}
+                급소
               </label>
             </div>
           ))}

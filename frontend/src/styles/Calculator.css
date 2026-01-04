@@ -186,6 +186,41 @@
   border-bottom-color: #444;
 }
 
+.calc-select {
+  position: relative;
+  width: 100%;
+}
+
+.calc-select__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  padding: 4px 0;
+  margin: 0;
+  list-style: none;
+  z-index: 10;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.calc-select__option {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.calc-select__option:hover {
+  background: #f1f1f1;
+}
+
+.calc-select__option--active {
+  background: #e9e9e9;
+}
+
 .calc-info-grid {
   display: grid;
   grid-template-columns: 90px 1fr;
@@ -318,6 +353,12 @@
 .calc-field-box {
   width: 16px;
   height: 16px;
+}
+
+.calc-field-box[type="number"] {
+  width: 48px;
+  height: 24px;
+  text-align: center;
 }
 
 .calc-field-box--left {

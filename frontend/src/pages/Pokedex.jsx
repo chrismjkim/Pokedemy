@@ -1,18 +1,20 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/pokedex/Sidebar";
 import "../styles/Home.css";
 import PokemonDetail from "../components/pokedex/PokemonDetail";
 
-function Home() {
+function Pokedex() {
 
     return (
     <div className="home">
         <Navbar />
         <div className="home__body">
-            <h1>Home</h1>
+            <Sidebar />
+            <PokemonDetail />
         </div>
     </div>
     );
 }
 
-export default Home;
+export default Pokedex;

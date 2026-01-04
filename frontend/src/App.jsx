@@ -3,6 +3,7 @@
 import react from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Home from "./pages/Home"
+import Pokedex from "./pages/Pokedex"
 import Calculator from "./pages/Calculator"
 import NotFound from "./pages/NotFound"
 import "./styles/App.css"
@@ -17,6 +18,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />}/>
+        <Route path="/dex" element={<Pokedex />} />
         <Route path="/calculator" element={<Calculator />}/>
         <Route path="*" element={<NotFound />}/>
       </Routes>

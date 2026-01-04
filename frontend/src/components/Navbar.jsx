@@ -3,7 +3,7 @@ import "../styles/Navbar.css";
 
 const navItems = [
   { label: "홈", to: "/" },
-  { label: "도감" },
+  { label: "도감", to: "/dex"},
   { label: "계산", to: "/calculator" },
   { label: "샘플" },
   { label: "파티" },

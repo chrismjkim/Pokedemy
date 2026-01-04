@@ -1,4 +1,4 @@
-﻿id,name,name_ko,raise_stat,lower_stat,like_berry_flavor_id,dislike_berry_flavor_id,sprite_url
+﻿id,name,name_ko,raise_stat_id,lower_stat_id,like_berry_flavor_id,dislike_berry_flavor_id,sprite_url
 0,Hardy,노력,1,1,0,0,/static/items/latest_sprites/item_1251.png
 1,Lonely,외로움,1,2,0,4,/static/items/latest_sprites/item_1231.png
 2,Brave,용감,1,5,0,2,/static/items/latest_sprites/item_1231.png

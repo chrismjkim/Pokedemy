@@ -1,75 +1,108 @@
-import { React , useState} from "react";
+import { React } from "react";
+import { useCalcStore } from "../../store/calcStore";
 
 function FieldForm() {
-  const [battleType, setBattleType] = useState("싱글배틀");
-  const [terrain, setTerrain] = useState(null);
-  const [weather, setWeather] = useState(null);
+  const field = useCalcStore((s) => s.field);
+  const setField = useCalcStore((s) => s.setField);
+  const setSideField = useCalcStore((s) => s.setSideField);
 
   const fieldChecks = [
-    "방어",
-    "스텔스록",
-    "압정뿌리기",
-    "거다이마름쇠",
-    "불바다",
-    "무지개",
-    "습지초원",
-    "씨뿌리기",
-    "소금절이",
-    "리플렉터",
-    "빛의장막",
-    "오로라베일",
-    "꿰뚫어보기를 당함",
-    "순풍",
-    "조수",
-    "파워스폿",
-    "플라워기프트",
-    "강철정신",
-    "프렌드가드",
-    "배터리",
+    { label: "스텔스록", key: "isSR", type: "checkbox" },
+    { label: "압정뿌리기", key: "spikes", type: "number" },
+    { label: "마름쇠", key: "steelsurge", type: "checkbox" },
+    { label: "거다이편달", key: "vinelash", type: "checkbox" },
+    { label: "거다이옥염", key: "wildfire", type: "checkbox" },
+    { label: "거다이포격", key: "cannonade", type: "checkbox" },
+    { label: "거다이분석", key: "volcalith", type: "checkbox" },
+    { label: "방어", key: "isProtected", type: "checkbox" },
+    { label: "씨뿌리기", key: "isSeeded", type: "checkbox" },
+    { label: "소금절이", key: "isSaltCure", type: "checkbox" },
+    { label: "리플렉터", key: "isReflect", type: "checkbox" },
+    { label: "빛의장막", key: "isLightScreen", type: "checkbox" },
+    { label: "오로라베일", key: "isAuroraVeil", type: "checkbox" },
+    { label: "꿰뚫어보기를 당함", key: "isForesight", type: "checkbox" },
+    { label: "순풍", key: "isTailwind", type: "checkbox" },
+    { label: "조수", key: "isHelpingHand", type: "checkbox" },
+    { label: "파워스폿", key: "isPowerSpot", type: "checkbox" },
+    { label: "플라워기프트", key: "isFlowerGift", type: "checkbox" },
+    { label: "강철정신", key: "isSteelySpirit", type: "checkbox" },
+    { label: "프렌드가드", key: "isFriendGuard", type: "checkbox" },
+    { label: "배터리", key: "isBattery", type: "checkbox" },
   ];
 
   const fieldToggleGroups = [
     {
       type: "radio",
       name: "battle",
-      options: ["싱글배틀", "더블배틀"],
-      selected: battleType,
-      onChange: setBattleType,
+      options: [
+        { label: "싱글배틀", value: "Singles" },
+        { label: "더블배틀", value: "Doubles" },
+      ],
+      selected: field.gameType,
+      onChange: (value) => setField("gameType", value),
       allowDeselect: false,
     },
     {
       type: "radio",
       name: "terrain",
-      options: ["일렉트릭필드", "그래스필드", "미스트필드", "사이코필드"],
-      selected: terrain,
-      onChange: setTerrain,
+      options: [
+        { label: "일렉트릭필드", value: "Electric" },
+        { label: "그래스필드", value: "Grassy" },
+        { label: "미스트필드", value: "Misty" },
+        { label: "사이코필드", value: "Psychic" },
+      ],
+      selected: field.terrain,
+      onChange: (value) => setField("terrain", value),
       allowDeselect: true,
+
     },
     {
       type: "radio",
       name: "weather",
       rows: [
-        ["강한 햇살", "비", "모래바람", "설경"],
-        ["끝의대지", "시작의바다", "델타스트림"],
+        [
+          { label: "쾌청", value: "Sun" },
+          { label: "비", value: "Rain" },
+          { label: "모래바람", value: "Sand" },
+          { label: "설경", value: "Snow" },
+        ],
+        [
+          { label: "강한 햇살", value: "Harsh Sunshine" },
+          { label: "강한 비", value: "Heavy Rain" },
+          { label: "난기류", value: "Strong Winds" },
+        ],
       ],
-      selected: weather,
-      onChange: setWeather,
+      selected: field.weather,
+      onChange: (value) => setField("weather", value),
       allowDeselect: true,
     },
     {
       type: "checkbox",
       name: "room",
-      options: ["매직룸", "원더룸", "중력"],
+      options: [
+        { label: "매직룸", key: "isMagicRoom" },
+        { label: "원더룸", key: "isWonderRoom" },
+        { label: "중력", key: "isGravity" },
+      ],
     },
     {
       type: "checkbox",
       name: "ruin",
-      options: ["재앙의구슬", "재앙의검", "재앙의그릇", "재앙의목간"],
+      options: [
+        { label: "재앙의구슬", key: "isBeadsOfRuin" },
+        { label: "재앙의검", key: "isSwordsOfRuin" },
+        { label: "재앙의목간", key: "isTabletsOfRuin" },
+        { label: "재앙의그릇", key: "isVesselofRuin" },
+      ],
     },
     {
       type: "checkbox",
       name: "aura",
-      options: ["페어리오라", "오라브레이크", "다크오라"],
+      options: [
+        { label: "페어리오라", key: "isFairyAura" },
+        { label: "오라브레이크", key: "isAuraBreak" },
+        { label: "다크오라", key: "isDarkAura" },
+      ],
     },
   ];
 
@@ -84,22 +117,31 @@ function FieldForm() {
               className="calc-toggle-group"
               key={`${group.type}-${group.name}-${rowIndex}`}
             >
-              {row.map((label) => {
+              {row.map((option) => {
                 const isChecked =
-                  group.type === "radio" && group.selected === label;
+                  group.type === "radio" && group.selected === option.value;
+                const checkboxChecked =
+                  group.type === "checkbox" && option.key
+                    ? Boolean(field[option.key])
+                    : false;
                 return (
                   <label
                     className="calc-toggle"
-                    key={`${group.name}-${label}`}
+                    key={`${group.name}-${option.label}`}
                   >
                     <input
                       className="calc-toggle-input"
                       type={group.type}
                       name={group.name}
-                      checked={group.type === "radio" ? isChecked : undefined}
-                      onChange={() => {
+                      checked={
+                        group.type === "radio" ? isChecked : checkboxChecked
+                      }
+                      onChange={(event) => {
                         if (group.type === "radio" && group.onChange) {
-                          group.onChange(label);
+                          group.onChange(option.value);
+                        }
+                        if (group.type === "checkbox") {
+                          setField(option.key, event.target.checked);
                         }
                       }}
                       onClick={() => {
@@ -108,12 +150,12 @@ function FieldForm() {
                           group.allowDeselect &&
                           isChecked
                         ) {
-                          group.onChange(null);
+                          group.onChange("");
                         }
                       }}
                     />
                     <span className="calc-toggle-label text-small">
-                      {label}
+                      {option.label}
                     </span>
                   </label>
                 );
@@ -124,19 +166,73 @@ function FieldForm() {
       </div>
 
       <div className="calc-field-checks flex-col">
-        {fieldChecks.map((label) => (
-          <div className="calc-field-row text-label" key={label}>
-            <input
-              type="checkbox"
-              className="calc-field-box calc-field-box--left"
-              aria-label={`${label} 공격측`}
-            />
-            <span className="calc-field-label text-small">{label}</span>
-            <input
-              type="checkbox"
-              className="calc-field-box calc-field-box--right"
-              aria-label={`${label} 수비측`}
-            />
+        {fieldChecks.map((item) => (
+          <div className="calc-field-row text-label" key={item.label}>
+            {item.type === "number" ? (
+              <input
+                type="number"
+                className="calc-field-box calc-field-box--left"
+                min="0"
+                max="3"
+                step="0"
+                value={field.attackerSide[item.key]}
+                onChange={(event) =>
+                  setSideField(
+                    "attackerSide",
+                    item.key,
+                    Number(event.target.value)
+                  )
+                }
+                aria-label={`${item.label} 공격측`}
+              />
+            ) : (
+              <input
+                type="checkbox"
+                className="calc-field-box calc-field-box--left"
+                checked={Boolean(field.attackerSide[item.key])}
+                onChange={(event) =>
+                  setSideField(
+                    "attackerSide",
+                    item.key,
+                    event.target.checked
+                  )
+                }
+                aria-label={`${item.label} 공격측`}
+              />
+            )}
+            <span className="calc-field-label text-small">{item.label}</span>
+            {item.type === "number" ? (
+              <input
+                type="number"
+                className="calc-field-box calc-field-box--right"
+                min="0"
+                max="3"
+                step="0"
+                value={field.defenderSide[item.key]}
+                onChange={(event) =>
+                  setSideField(
+                    "defenderSide",
+                    item.key,
+                    Number(event.target.value)
+                  )
+                }
+                aria-label={`${item.label} 수비측`}
+              />
+            ) : (
+              <input
+                type="checkbox"
+                className="calc-field-box calc-field-box--right"
+                checked={Boolean(field.defenderSide[item.key])}
+                onChange={(event) =>
+                  setSideField(
+                    "defenderSide",
+                    item.key,
+                    event.target.checked
+                  )
+                }
+                aria-label={`${item.label} 수비측`}
+              />
+            )}
           </div>
         ))}
       </div>

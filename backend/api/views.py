@@ -15,7 +15,7 @@ from .serializers import *
 from .models import *
 from .models import Type as PokemonType # 이름 충돌 방지
 from .scripts import pokemonhome as pohome
-from .lookups import get_lookup # lookups.py
+from .lookups import get_lookup, warm_lookup_tables # lookups.py
 
 # 타입 힌팅
 from typing import Dict, Type, List, Tuple
@@ -118,3 +118,15 @@ class PokemonDetailListCreate(APIView):
         # 가공된 json을 return한다
         return Response(all_details)
     
+class LookupList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        kinds = request.query_params.get("kinds")
+        kinds = kinds.split(",") if kinds else ["pokemon","ability","item","nature","type","move"]
+        lookup = warm_lookup_tables()  # 캐시 사용
+        def to_options(kind):
+            return list(lookup[kind].values())
+
+        payload = {k: to_options(k) for k in kinds}
+        return Response(payload)

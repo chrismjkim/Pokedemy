@@ -3,7 +3,7 @@ import { useStore } from "../../store/Store";
 
 import api from "../../api";
 import PokemonCard from "./PokemonCard";
-import "../../styles/MatchPokemonRankingList.css"
+import "../../styles/MatchPokemonRankingList.css";
 
 function MatchPokemonRankingList() {
   const [error, setError] = useState(null);
