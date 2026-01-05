@@ -33,6 +33,14 @@ function PokemonForm({
     hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0,
   };
   
+  const clearStats = () => {
+    ["hp", "atk", "def", "spa", "spd", "spe"].forEach((key) => {
+      setStat(sideKey, "ivs", key, 31);
+      setStat(sideKey, "evs", key, 0);
+      setStat(sideKey, "boosts", key, 0);
+    });
+  }
+
   // 스탯 테이블 정의
   const statRows = [
     {
@@ -199,15 +207,18 @@ function PokemonForm({
         </div>
 
         <div className="calc-stat-actions">
+          {/*
           <button
             type="button"
             className="calc-button calc-button--mini bg-white text-label"
           >
             내구 최적화
           </button>
+          */}
           <button
             type="button"
             className="calc-button calc-button--mini bg-white text-label"
+            onClick={clearStats}
           >
             초기화
           </button>
