@@ -21,6 +21,9 @@ body {
 .text-small    { font-size: 14px; }
 .text-label    { font-size: 12px; }
 
+/* 텍스트 색 */
+.text-gray { color: #686868;}
+
 /* 스프라이트 크기 */
 .sprite-xs { width: 28px; height: 28px; }
 .sprite-s { width: 36px; height: 36px; }

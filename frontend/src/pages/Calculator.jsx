@@ -3,19 +3,12 @@ import { calculate, Generations, Pokemon, Move, Field} from "@smogon/calc";
 import { useCalcStore } from "../store/calcStore";
 import api from "../api";
 import Navbar from "../components/Navbar";
+import CalcResult from "../components/calculator/CalcResult";
 import PokemonForm from "../components/calculator/PokemonForm";
 import FieldForm from "../components/calculator/FieldForm";
 import "../styles/Calculator.css";
 
 function Calculator() {
-
-  const apiBase = import.meta.env.VITE_API_URL;
-
-  const compareRows = [
-    { label: "스피드", left: "201", right: "160" },
-    { label: "물리내구", left: "48000", right: "87000" },
-    { label: "특수내구", left: "39600", right: "55520" },
-  ];
 
   // const [pokemonOptions, setPokemonOptions] = useState(null);
 
@@ -76,11 +69,32 @@ function Calculator() {
     })
     : [];
 
+  const moveByValue = useMemo(
+    () => new Map(moveOptions.map((opt) => [opt.value, opt.object])),
+    [moveOptions]
+  );
+
   const gen = Generations.get(9);
   const attacker = useCalcStore((s) => s.attacker);
   const defender = useCalcStore((s) => s.defender);
   const move = useCalcStore((s) => s.attacker.moves[0])
   const field = useCalcStore((s) => s.field);
+
+  const swapSides = () => {
+    const nextAttackerMoves = defenderMoves;
+    const nextDefenderMoves = attackerMoves;
+    setAttackerMoves(nextAttackerMoves);
+    setDefenderMoves(nextDefenderMoves);
+    useCalcStore.setState((state) => ({
+      attacker: state.defender,
+      defender: state.attacker,
+      field: {
+        ...state.field,
+        attackerSide: state.field.defenderSide,
+        defenderSide: state.field.attackerSide,
+      },
+    }));
+  };
 
   const { result_atk, result_def } = useMemo(() => {
     const empty = {
@@ -140,48 +154,65 @@ function Calculator() {
     getLookups();
   }, [lookupsLoaded, setLookups]);
 
+  useEffect(() => {
+    if (!moveOptions.length) {
+      return;
+    }
+    const buildMoves = (sideMoves) =>
+      Array.from({ length: 4 }, (_, idx) => {
+        const moveName = sideMoves?.[idx]?.name;
+        return moveByValue.get(moveName) ?? null;
+      });
+    const sameMoveNames = (prev, next) => {
+      if (prev.length !== next.length) return false;
+      for (let i = 0; i < prev.length; i += 1) {
+        if ((prev[i]?.name ?? null) !== (next[i]?.name ?? null)) {
+          return false;
+        }
+      }
+      return true;
+    };
 
+    const nextAttackerMoves = buildMoves(attacker?.moves);
+    const nextDefenderMoves = buildMoves(defender?.moves);
+
+    setAttackerMoves((prev) =>
+      sameMoveNames(prev, nextAttackerMoves) ? prev : nextAttackerMoves
+    );
+    setDefenderMoves((prev) =>
+      sameMoveNames(prev, nextDefenderMoves) ? prev : nextDefenderMoves
+    );
+  }, [moveOptions.length, moveByValue, attacker?.moves, defender?.moves]);
+
+  const attackerStats = result_atk?.[0]?.attacker?.stats;
+  const defenderStats = result_atk?.[0]?.defender?.stats;
+  const calcDurability = (stats, key) =>
+    stats ? Math.round((stats.hp * stats[key]) / 0.411) : 0;
+
+  const compareRows = [
+    {
+      label: "스피드",
+      left: attackerStats?.spe ?? 0,
+      right: defenderStats?.spe ?? 0,
+    },
+    {
+      label: "물리내구",
+      left: calcDurability(attackerStats, "def"),
+      right: calcDurability(defenderStats, "def"),
+    },
+    {
+      label: "특수내구",
+      left: calcDurability(attackerStats, "spd"),
+      right: calcDurability(defenderStats, "spd"),
+    },
+  ];
 
   return (
     <div className="calculator bg-gray-soft">
       <Navbar />
       <div className="calculator__body flex-col">
         <section className="calculator__top-grid">
-          <div className="calc-panel bg-white flex-col">
-            <h3 className="calc-panel__title text-body">공격측 계산 결과</h3>
-            <ul className="calc-result-list flex-col">
-              {attackerMoves.map((move) => (
-                <li
-                  className="calc-result-item bg-gray-soft"
-                  key={`def-${move.name}`}
-                >
-                  <div
-                    className="calc-sprite sprite-m flex-row-center"
-                    aria-hidden="true"
-                  >
-                    {move.type_id.icon_url && (
-                      <img
-                        src={`${apiBase}${move.type_id.icon_url}`}
-                        alt={move.type_id.name_ko || "type"}
-                        className="poke-sprite"
-                      />
-                    )}
-                  </div>
-                  <div className="calc-result-text flex-col text-body">
-                    <div className="calc-result-line">
-                      <span className="calc-result-name text-body">
-                        {move.name_ko}
-                      </span>
-                      <span className="calc-result-damage text-body">
-                        계산결과
-                      </span>
-                    </div>
-                    <div className="calc-result-sub text-body"></div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <CalcResult moves={ attackerMoves } result={ result_atk } sideKey="attacker"/>
 
           <div className="calc-panel calc-panel--center bg-white flex-col">
             <h3 className="calc-panel__title text-body">비교</h3>
@@ -195,81 +226,23 @@ function Calculator() {
               ))}
             </div>
             <div className="calc-compare-actions flex-col">
-              <button type="button" className="calc-button bg-white text-label">
+              <button
+                type="button"
+                className="calc-button bg-white text-small"
+                onClick={swapSides}
+              >
                 공수 교대
               </button>
-              <button type="button" className="calc-button bg-white text-label">
+              <button type="button" className="calc-button bg-white text-small">
                 계산 결과 저장
               </button>
-              <button type="button" className="calc-button bg-white text-label">
+              <button type="button" className="calc-button bg-white text-small">
                 샘플 저장
               </button>
             </div>
-            {/* 
-            result 테스트용 출력 
-            <div>{result.attacker.species.name}</div>
-            <div>{result.attacker.ability}</div>
-            <div>{result.attacker.item}</div>
-            <div>{result.attacker.nature}</div>
-            <div>{result.rawDesc.moveName}</div>
-            <div>{result.field.gameType || ""}</div>
-            <div>{result.field.terrain}</div>
-            <div>{result.field.weather}</div>
-            <div>{result.damage[0]}</div>
-            <div>{result.move.isCrit === true ? "true" : "false"}</div>
-            */}
-            <div>공격측: {result_atk[0].attacker.species.name}</div>
-            <div>수비측: {result_atk[0].defender.species.name}</div>
-            <div>
-              수비측 내구력:{" "}
-              {(result_atk[0].defender.stats.hp *
-                result_atk[0].defender.stats.def) /
-                0.4114}
-            </div>
-            <div>
-              결정력:{" "}
-              {(result_atk[0].damage[7] * result_atk[0].defender.stats.def) /
-                0.411}
-            </div>
-            <div>최저 데미지: {result_atk[0].damage[0]}</div>
-            <div>최고 데미지: {result_atk[0].damage[15]}</div>
           </div>
 
-          <div className="calc-panel bg-white flex-col">
-            <h3 className="calc-panel__title text-body">수비측 계산 결과</h3>
-            <ul className="calc-result-list flex-col">
-              {defenderMoves.map((move) => (
-                <li
-                  className="calc-result-item bg-gray-soft"
-                  key={`def-${move.name}`}
-                >
-                  <div
-                    className="calc-sprite sprite-m flex-row-center"
-                    aria-hidden="true"
-                  >
-                    {move.type_id.icon_url && (
-                      <img
-                        src={`${apiBase}${move.type_id.icon_url}`}
-                        alt={move.type_id.name_ko || "type"}
-                        className="poke-sprite"
-                      />
-                    )}
-                  </div>
-                  <div className="calc-result-text flex-col text-body">
-                    <div className="calc-result-line">
-                      <span className="calc-result-name text-body">
-                        {move.name_ko}
-                      </span>
-                      <span className="calc-result-damage text-body">
-                        계산결과
-                      </span>
-                    </div>
-                    <div className="calc-result-sub text-body"></div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <CalcResult moves={defenderMoves} result={result_def} sideKey="defender"/>
         </section>
 
         <section className="calculator__bottom-grid">

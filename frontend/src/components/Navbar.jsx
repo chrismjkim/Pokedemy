@@ -5,8 +5,8 @@ const navItems = [
   { label: "홈", to: "/" },
   { label: "도감", to: "/dex"},
   { label: "계산", to: "/calculator" },
-  { label: "샘플" },
-  { label: "파티" },
+  // { label: "샘플" },
+  // { label: "파티" },
 ];
 
 function Navbar() {
@@ -27,15 +27,20 @@ function Navbar() {
               {item.label}
             </NavLink>
           ) : (
-            <span key={item.label} className="navbar__link navbar__link--disabled">
+            <span
+              key={item.label}
+              className="navbar__link navbar__link--disabled"
+            >
               {item.label}
             </span>
           )
         )}
       </div>
+      {/*
       <button type="button" className="navbar__login">
         로그인
       </button>
+      */}
     </nav>
   );
 }

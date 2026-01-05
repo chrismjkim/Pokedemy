@@ -1,4 +1,4 @@
-import { React, useMemo, useState } from "react";
+import { React, useMemo, useState, useEffect } from "react";
 import ListInput from "../ListInput";
 import { useCalcStore } from "../../store/calcStore";
 import * as calc from "../../calculation";
@@ -118,6 +118,12 @@ function PokemonForm({
     return String(found.label ?? found.name ?? found.value ?? value ?? "");
   };
 
+  useEffect(() => {
+    const obj = pokemonByValue.get(side.species);
+    const sprite = obj?.sprite_url;
+    setSpriteSrc(sprite ? `${apiBase}${sprite}` : "");
+  }, [side.species, pokemonByValue, apiBase]);
+
   return (
     <div className="calc-panel bg-white flex-col">
       <h3 className="calc-panel__title text-body">{sideLabel}</h3>
@@ -129,8 +135,8 @@ function PokemonForm({
           >
             {spriteSrc && (
               <img
-                src={ spriteSrc }
-                alt={ result.attacker.name || "pokemon" }
+                src={spriteSrc}
+                alt={result.attacker.name || "pokemon"}
                 className="poke-sprite"
               />
             )}
@@ -164,7 +170,6 @@ function PokemonForm({
             <span className="calc-info-label text-small">지닌물건</span>
             <ListInput
               options={itemOptions}
-
               inputClassName="calc-input text-small"
               ariaLabel="지닌물건"
               value={side.item || ""}
@@ -321,14 +326,20 @@ function PokemonForm({
               <label className="calc-check text-label">
                 <input
                   type="checkbox"
-                  onChange={(v) => setMoveField(sideKey, index, "isZ", v)}
+                  checked={Boolean(side.moves?.[index]?.isZ)}
+                  onChange={(e) =>
+                    setMoveField(sideKey, index, "isZ", e.target.checked)
+                  }
                 />{" "}
                 Z기술
               </label>
               <label className="calc-check text-label">
                 <input
                   type="checkbox"
-                  onChange={(v) => setMoveField(sideKey, index, "isCrit", v)}
+                  checked={Boolean(side.moves?.[index]?.isCrit)}
+                  onChange={(e) =>
+                    setMoveField(sideKey, index, "isCrit", e.target.checked)
+                  }
                 />{" "}
                 급소
               </label>

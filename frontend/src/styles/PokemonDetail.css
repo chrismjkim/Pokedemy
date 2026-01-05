@@ -30,6 +30,11 @@
     gap: 48px;
 }
 
+.info-box.poke-detail {
+    overflow: auto;
+    /* overflow: hidden 덮어쓰기 */
+}
+
 .card-white{
     display: flex;
     width: 100%;
