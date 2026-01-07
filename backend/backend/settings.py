@@ -3,11 +3,13 @@ from datetime import timedelta
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env_name = os.getenv("DJANGO_ENV", "dev")  # 기본값 dev
+env_file = BASE_DIR / (".env.prod" if env_name == "prod" else ".env.dev")
+
+load_dotenv(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
