@@ -1,5 +1,6 @@
 import os
 import re
+import gc # 메모리 관리용 라이브러리
 import pandas as pd
 from django.core.management.base import BaseCommand
 from django.apps import apps
@@ -103,7 +104,7 @@ class Command(BaseCommand):
 
         # -------------------------------------------------------
         # 3️⃣ bulk_create insert 실행
-        CHUNK = 10000  # 성능 최적화를 위한 chunk
+        CHUNK = 1000  # 청크 단위로 읽어 메모리 사용량 최소화
 
         for model in target_models:
             model_name = model.__name__
@@ -120,20 +121,6 @@ class Command(BaseCommand):
 
             self.stdout.write(f"📂 {csv_path} → {model_name} 테이블로 불러오는 중...")
 
-            try:
-                # utf-8-sig to safely drop BOM; normalize 컬럼명을 소문자/스네이크로 맞춘다.
-                df = pd.read_csv(csv_path, encoding="utf-8-sig")
-                df.columns = [c.strip() for c in df.columns]
-                # cId -> cid, rankCnt -> rank_cnt 등 변형 보정
-                rename_map = {
-                    "cId": "cid", "cid": "cid", "CID": "cid",
-                    "rankCnt": "rank_cnt", "rankcnt": "rank_cnt",
-                }
-                df.rename(columns=rename_map, inplace=True)
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"❌ CSV 읽기 실패: {csv_path} — {e}"))
-                continue
-
             fields = [f for f in model._meta.fields]
 
             # 모델에 존재하는 컬럼만 필터링
@@ -145,49 +132,74 @@ class Command(BaseCommand):
                 else:
                     expected_cols.add(f.db_column or f.name)
 
-            df = df[[c for c in df.columns if c in expected_cols]]
-
-            objs = []
-            for _, row in df.iterrows():
-                data = {}
-
-                for f in fields:
-                    if isinstance(f, models.ForeignKey):
-                        col = f.db_column or f"{f.name}_id"
-                        if col not in df.columns:
-                            alt = f"{f.name}_id"
-                            if alt not in df.columns:
-                                continue
-                            col = alt
-                        value = row[col]
-                        if pd.isna(value):
-                            continue
-                        data[f"{f.name}_id"] = int(value)
-                    else:
-                        col = f.db_column or f.name
-                        if col not in df.columns:
-                            continue
-                        value = row[col]
-                        if pd.isna(value):
-                            continue
-                        data[f.name] = value
-
-                objs.append(model(**data))
+            try:
+                # utf-8-sig to safely drop BOM; normalize 컬럼명을 소문자/스네이크로 맞춘다.
+                # reader는 Iterator가 되어서 필요할 때 DataFrame 조각들을 하나씩만 꺼내줌
+                reader = pd.read_csv(csv_path, encoding="utf-8-sig", chunksize=CHUNK)
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f"❌ CSV 읽기 실패: {csv_path} — {e}"))
+                continue
 
             inserted = 0
+            for df in reader:
+                df.columns = [c.strip() for c in df.columns]
+                # cId -> cid, rankCnt -> rank_cnt 등 변형 보정
+                rename_map = {
+                    "cId": "cid", "cid": "cid", "CID": "cid",
+                    "rankCnt": "rank_cnt", "rankcnt": "rank_cnt",
+                }
+                df.rename(columns=rename_map, inplace=True)
 
-            # ---------------------------
-            # bulk_create chunk 처리
-            # ---------------------------
-            with transaction.atomic():
-                for i in range(0, len(objs), CHUNK):
-                    batch = objs[i:i+CHUNK]
-                    try:
-                        model.objects.bulk_create(batch, ignore_conflicts=True)
-                        inserted += len(batch)
-                    except Exception as e:
-                        self.stdout.write(self.style.ERROR(f"❌ {model_name} bulk_create 실패: {e}"))
-                        raise
+                df = df[[c for c in df.columns if c in expected_cols]]
+                if df.empty:
+                    del df
+                    continue
+
+                objs = []
+                for _, row in df.iterrows():
+                    data = {}
+
+                    for f in fields:
+                        if isinstance(f, models.ForeignKey):
+                            col = f.db_column or f"{f.name}_id"
+                            if col not in df.columns:
+                                alt = f"{f.name}_id"
+                                if alt not in df.columns:
+                                    continue
+                                col = alt
+                            value = row[col]
+                            if pd.isna(value):
+                                continue
+                            data[f"{f.name}_id"] = int(value)
+                        else:
+                            col = f.db_column or f.name
+                            if col not in df.columns:
+                                continue
+                            value = row[col]
+                            if pd.isna(value):
+                                continue
+                            data[f.name] = value
+
+                    objs.append(model(**data))
+
+                if not objs:
+                    del df, objs
+                    continue
+
+                try:
+                    with transaction.atomic():
+                        model.objects.bulk_create(objs, ignore_conflicts=True)
+                        inserted += len(objs)
+                        self.stdout.write(
+                            f"   → {model_name} 테이블 {inserted}행 insert 완료"
+                        )
+                except Exception as e:
+                    self.stdout.write(self.style.ERROR(f"❌ {model_name} bulk_create 실패: {e}"))
+                    raise
+                finally:
+                    # 청크 처리 후 메모리 해제
+                    del df, objs
+                    gc.collect()
 
             self.stdout.write(self.style.SUCCESS(f"✅ {inserted}행 {model_name} 추가 완료"))
 

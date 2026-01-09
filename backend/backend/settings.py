@@ -15,12 +15,13 @@ load_dotenv(env_file)
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h3se4g-^$85+!+ck_e^9&&d=yk_f0al5-vzzk-t38kk9e5a6(o'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ["*"] # allow any different host to host our application
+# allow any different host to host our application
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()]
 
 # 토큰 관련 설정
 REST_FRAMEWORK = {

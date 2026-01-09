@@ -8,16 +8,21 @@ function MatchDropdownList() {
 
   const rule = useStore((s) => s.selectedRule);
   const setRule = useStore((s) => s.setSelectedRule);
+  // 매치 목록
   const matchesByRule = useStore((s) => s.matchesByRule);
+  // 싱글, 더블에 따라 매치 목록을 만듦
   const setMatchesByRule = useStore((s) => s.setMatchesByRule);
 
+  // 현재 설정된 매치
   const match = useStore((s) => s.selectedMatch);
   const setMatch = useStore((s) => s.setSelectedMatch);
 
+  // 현재 선택된 포켓몬에 대한 상세 데이터
   const setPokemonDetails = useStore((s) => s.setPokemonDetails);
   const pokemonDetailsByMatch = useStore((s) => s.pokemonDetailsByMatch);
   const setPokemonDetailsForMatch = useStore((s) => s.setPokemonDetailsForMatch);
 
+  // 로딩 중 bool
   const setIsLoadingPDetails = useStore((s) => s.setIsLoadingPDetails);
   const pendingDetailsRef = useRef(new Set());
   const pendingMatchesRef = useRef(new Set());
