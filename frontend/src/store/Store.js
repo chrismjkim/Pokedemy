@@ -29,9 +29,6 @@ export const useStore = create((set) => ({
       pokemonDetailsByMatch: { ...state.pokemonDetailsByMatch, [cid]: details },
     })),
 
-  pokemonDetails: null, // json
-  setPokemonDetails: (json) => set({ pokemonDetails: json}),
-  
   isLoadingPDetails: false,
   setIsLoadingPDetails: (bool) => set({ isLoadingPDetails: bool })
 }));

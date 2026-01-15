@@ -1,63 +1,20 @@
 import "../../styles/PokemonDetail.css";
-import { useStore } from "../../store/Store";
 import { useEffect, useState } from "react";
 import PokemonStats from "./PokemonStats";
+import { usePokemonDetailData } from "../../hooks/usePokemonDetailData";
 
 function PokemonDetail () {
-  const selectedPokemon = useStore((s) => s.selectedPokemon);
-  const selectedMatch = useStore((s) => s.selectedMatch);
-  const pdetails = useStore((s) => s.pokemonDetails);
+  const {
+    selectedPokemon,
+    selectedMatch,
+    speciesId,
+    speciesName,
+    abilities,
+    usages,
+    topUsageIdx,
+  } = usePokemonDetailData();
   const [activeAbilityIdx, setActiveAbilityIdx] = useState(0);
   const [abilityManual, setAbilityManual] = useState(false);
-
-  const speciesId =
-    selectedPokemon?.pokemon_species_id?.id ??
-    selectedPokemon?.pokemon_species_id ??
-    null;
-  const p_id = speciesId != null ? String(speciesId) : null;
-  const p_form = selectedPokemon ? String(selectedPokemon.form ?? 0) : null;
-  const speciesName =
-    selectedPokemon?.pokemon_species_id?.name_ko ||
-    selectedPokemon?.pokemon_species_id?.name ||
-    selectedPokemon?.name_ko ||
-    selectedPokemon?.name ||
-    "이름 없음";
-  const detail = p_id && p_form ? pdetails?.[p_id]?.[p_form] : null;
-
-  const normalizeAbility = (ab) => {
-    if (!ab) return null;
-    if (typeof ab === "object") return ab;
-    return { id: ab, name_ko: "", name: String(ab) };
-  };
-
-  // 특성 리스트 (존재하는 것만)
-  const abilities = (selectedPokemon
-    ? [
-        selectedPokemon.ability1_id,
-        selectedPokemon.ability2_id,
-        selectedPokemon.ability_hidden_id,
-      ]
-    : [])
-    .map(normalizeAbility)
-    .filter(Boolean);
-  // 현재 선택된 특성
-  const abilityUsage = detail?.temoti?.tokusei ? Object.values(detail.temoti.tokusei) : [];
-  const usageById = new Map(
-    abilityUsage
-      .filter(Boolean)
-      .map((u) => [String(u.id), u.usage_rate ?? u.val ?? null])
-  );
-  const usages = abilities.map((ab) => usageById.get(String(ab.id)) ?? null);
-
-  // 페이지 로딩 시 가장 사용률이 높은 특성 버튼이 선택되어 설명이 보여지도록 함
-  const topUsageIdx = usages.length
-    ? usages.reduce((bestIdx, val, idx) => {
-        const bestVal = usages[bestIdx];
-        const cur = val == null ? -1 : Number(val);
-        const best = bestVal == null ? -1 : Number(bestVal);
-        return cur > best ? idx : bestIdx;
-      }, 0)
-    : 0;
   useEffect(() => {
     if (!abilities.length) return;
     if (!abilityManual) {

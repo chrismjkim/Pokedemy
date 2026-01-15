@@ -1,11 +1,6 @@
 import { create } from "zustand";
 
 export const useCalcStore = create((set) => ({
-    lookups: null,
-    setLookups: (res) => set({ lookups: res }),
-    lookupsLoaded: false,
-    setLookupsLoaded: (bool) => set({ lookupsLoaded: bool }),
-
     gen: 9, // smogon/calc generation
     attacker: {
       species: "Talonflame",
